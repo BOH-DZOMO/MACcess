@@ -1,0 +1,1 @@
+<textarea name="" id="" cols="30" rows="5" class="w-full border rounded mt-2"></textarea>
