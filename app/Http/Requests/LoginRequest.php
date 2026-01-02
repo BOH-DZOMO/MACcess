@@ -68,7 +68,17 @@ class LoginRequest extends FormRequest
             if (! $user->device || ! $user->device->is_active) {
                 Auth::logout();
                 return back()->withErrors(['device' => 'Device inactive']);
+                //maybe return to a particular view to make device active
             }
+            //maybe the aoi version will need to throw but an exception bcs i don't know if back method works there
+            // if ($user->device || $user->device->is_active) {
+            //     $user = Auth::user(); // guaranteed logged-in user
+            // }else {
+            //     return back()->withErrors(['device' => 'Device inactive']);
+
+            // }
+
+            
         } catch (ModelNotFoundException $e) {
              throw ValidationException::withMessages(
                 [

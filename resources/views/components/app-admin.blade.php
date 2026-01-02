@@ -172,6 +172,9 @@
     </main>
     {{-- @vite(['resources/js/admin_base.js']) --}}
     @stack('scripts')
+    <script src="../../../../../node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="../../../../../node_modules/jquery-ui/jquery-ui.min.js"></script>
+    <script src="../../../../../node_modules/select2/dist/js/select2.min.js"></script>
     <script defer>
         console.log("Hello Admin");
         const toggleButton = document.getElementById("toggle-btn");
