@@ -13,9 +13,6 @@ Route::get('/', function () {
 Route::get('/dashboard', function () {
     return view('dashboard');
 });
-Route::get('/t', function () {
-    return view('testing');
-});
 
 Route::get("email",function(){
     Mail::to('bob@gmail.com')->queue(new emailActivationOtp("boh dzomo","567900"));
