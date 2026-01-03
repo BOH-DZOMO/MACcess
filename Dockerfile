@@ -1,14 +1,25 @@
-# 1. Use a special 'all-in-one' tool that has PHP and a Web Server
-FROM richarvey/nginx-php-fpm:latest
+# --- STAGE 1: Build the Assets (Node.js) ---
+FROM node:18 AS build-stage
+WORKDIR /app
+COPY . .
+RUN npm install
+RUN npm run build
 
-# 2. Put your code into the container
+# --- STAGE 2: Run the Website (PHP/Nginx) ---
+FROM richarvey/nginx-php-fpm:latest
+WORKDIR /var/www/html
+
+# Copy all your code
 COPY . .
 
-# 3. Tell the container where the "front door" of your app is
+# Copy ONLY the built assets from Stage 1 into the public folder
+COPY --from=build-stage /app/public/build ./public/build
+
+# Image config
 ENV WEBROOT /var/www/html/public
+ENV APP_ENV production
+ENV RUN_SCRIPTS 1
 
-# 4. Install the Laravel parts
+# Install Laravel parts
 RUN composer install --no-dev --optimize-autoloader
-
-# 5. Make sure the 'closets' (folders) are unlocked so Laravel can write files
 RUN chown -R www-data:www-data storage bootstrap/cache
