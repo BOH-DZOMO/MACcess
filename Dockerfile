@@ -24,14 +24,5 @@ ENV RUN_SCRIPTS 1
 RUN composer install --no-dev --optimize-autoloader
 RUN chown -R www-data:www-data storage bootstrap/cache
 
-
-# ... (after your existing COPY and RUN commands)
-
-# Set the document root to /public
-ENV WEBROOT /var/www/html/public
-
-# This tells the image to use the Laravel-specific Nginx config
-ENV NGINX_CONF_INCLUDE laravel
-
-# Crucial: Ensure the server treats index.php as the entry point
-RUN sed -i 's/index index.html index.htm;/index index.php index.html index.htm;/g' /etc/nginx/sites-available/default.conf
+# Copy our custom nginx config
+COPY conf/nginx/nginx-site.conf /etc/nginx/sites-available/default.conf
