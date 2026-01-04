@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware("guest")->group(function () {
     Route::post("/register", [RegisteredUserController::class, "store"]);
     Route::post("/login", [AuthenticatedSessionController::class, "store"]);
-    Route::get("/activate_account", [RegisteredUserController::class, "activateAccount"]);
+    Route::post("/activate_account", [RegisteredUserController::class, "activateAccount"]);
 });
 Route::middleware('auth:sanctum')->group(function () {
 
