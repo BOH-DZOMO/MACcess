@@ -132,4 +132,29 @@ class RegisteredUserController extends Controller
                 ],201);
         }
     }
+
+    public function resendActivationOtp(Request $request)
+    {
+        $data = $request->validate(["link_token" => "required|email"]);
+        $user = User::where("email", $data["link_token"])->first();
+        if (!$user) {
+            return response()->json([
+                "success" => false,
+                "message" => "Invalid email address."
+            ], 404);
+        }
+        $code = (new Otp)->generate($user->email, 'numeric', 6, 10);
+        if ($code->status) {
+            Mail::to($user->email)->queue(new emailActivationOtp($user->name,$code->token));
+            return response()->json([
+                "success" => true,
+                "message" => "A new otp code has being sent to your email",
+            ],201);
+        } else {
+            return response()->json([
+                "success" => false,
+                "message" => "Try again an error occured"]
+            ,500);
+        }     
+    }
 }
