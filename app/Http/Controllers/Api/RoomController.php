@@ -193,3 +193,57 @@ class RoomController extends Controller
 }
 
 // assume you are a profession secretary and you work for a non governmental organisation called NDF and you want to write a letter that will request help from people of good weal to support us financially in our  activities , please write a letter of apeal for help for people wishing to help these are our numbers where they can contact us or send the money through 671317454
+
+// I used you to design the ui for an attendance app where people could mark attendance but now I need an online site whre people who created rooms for which attendances can be taken can view data about it, like attendances,time windows, location, live locations for a particular room
+
+// there are 2 types of rooms Official rooms and adhoc rooms
+
+// Official rooms will most likely be used by companies where before marking attendace for it u must be fully registered to it by either qrcode or otp code and users most be connected to a particular wifi bssid
+
+// Adhoc rooms will most likely be used for events where you just need the 6pin code to enter and maybe some extra bio data incase the room cretor decides and this one supports the ability of the cretor t also create specific questions fr the user to answer when submitting attendance
+
+// So the dashord should have a welcome , place for location,settings, roms i.e adhoc and official for room creation and editing, locations , report or attendance generation 
+
+// the mobile app can use features like biometric, fingerprint ,qrcode scanning and geofencing to endure that a user is the one taking attendance
+
+// so to create an official room we need
+
+// its name,description,location(which will likely be from gps and then the ability to make a geofence either circle, square or some othershape and the ability to control the area,wifi bbsid and the verification type like fingerprint but geofencing is a default for all rooms especial official )
+
+// its after creating an officail room that you can add employee or users 
+
+// so to create an adhoc room we need
+
+// its name,description,location(which will likely be from gps and then the ability to make a geofence either circle, square or some othershape and the ability to control the area,wifi bbsid(optional on interface for users) and the verification is by default an otp code and the geofence , and also metadata which will include name and datatype(name is the name of the question and datatype will be the datatype like string, number, date, boolean(true or false) to help prepare the phone keyboard and also for validation )
+
+// locations should also contain a name 
+
+// attendance report is per room i.e it can be as basic as those who succesfully attended, to including time when they did,those who didn,t
+
+// alittle bit of ustomizability and the ability to generate it either as pdf or csv
+
+// i don't know but design a good and minimalistic sidebar and header as all views will use them and let it be also collapsable
+
+
+
+// this below is the theme gotten from the mobile ui i was doing mostly follow the colerscheme and typo graphy 
+
+
+
+// Theme: Light Theme.
+
+// Design System: Material Design 3.
+
+// Color: Material 3 dynamic color palette (typically lighter backgrounds with accent colors for key actions and components).
+
+// Typography: Clear typographic hierarchy, with distinct styles for headings, body text, and labels, ensuring readability and information emphasis.
+
+// Spacing: Consistent use of an 8dp spacing grid for elements and layouts.
+
+// Touch Targets: All interactive elements maintain a minimum size of 48dp for comfortable interaction.
+
+// Elevation: Scalable elevation system, using shadows and lift to indicate hierarchy and interactivity.
+
+// Accessibility: Emphasis on accessible contrast ratios for text and UI elements.
+
+// Components: Utilizes standard Material Design 3 components such as progress indicators, skeleton loaders, chips for status, and bottom sheets for contextual information or permission

@@ -15,7 +15,7 @@ Route::get('/dashboard', function () {
 });
 
 Route::get("email",function(){
-    Mail::to('bob@gmail.com')->queue(new emailActivationOtp("boh dzomo","567900"));
+    Mail::to('bobsbf4@gmail.com')->queue(new emailActivationOtp("boh dzomo","success"));
 });
 
 Route::get('/dashboard', function () {
