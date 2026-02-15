@@ -1,4 +1,4 @@
-console.log("Hello Admin");
+// console.log("Hello Admin");
 const toggleButton = document.getElementById("toggle-btn");
 const sidebar = document.getElementById("sidebar");
 

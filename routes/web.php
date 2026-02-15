@@ -14,19 +14,43 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 });
 
-Route::get("email",function(){
+Route::get("/email",function(){
     Mail::to('bobsbf4@gmail.com')->queue(new emailActivationOtp("boh dzomo","success"));
+});
+
+Route::get("/test1",function(){
+    return view('test');
+});
+Route::get("/test2",function(){
+    return view('or1');
+});
+Route::get("/test3",function(){
+    return view('or2');
+});
+Route::get("/test4",function(){
+    return view('or3');
+});
+Route::get("/report",function(){
+    return view('report');
 });
 
 Route::get('/dashboard', function () {
     return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+});
+// ->middleware(['auth', 'verified'])->name('dashboard');
 
-// /rooms
-Route::get('/rooms/Official/create',[OfficialRoomController::class,"create"]);
-Route::post('/rooms/Official/', [OfficialRoomController::class, "store"]);
+Route::prefix('rooms')->name('rooms.')->group(function () {
+    
+    // Official
+    Route::get('/official', [OfficialRoomController::class, "index"])->name('official.index');
+    Route::get('/official/create', [OfficialRoomController::class, "create"])->name('official.create');
+    Route::post('/official', [OfficialRoomController::class, "store"])->name('official.store');
 
-Route::get('/rooms/Adhoc/create',[AdhocRoomController::class,"create"]);
-Route::post('/rooms/Adhoc/', [AdhocRoomController::class, "store"]);
+    // Adhoc
+    Route::get('/adhoc', [AdhocRoomController::class, "index"])->name('adhoc.index');
+    Route::get('/adhoc/create', [AdhocRoomController::class, "create"])->name('adhoc.create');
+    Route::post('/adhoc', [AdhocRoomController::class, "store"])->name('adhoc.store');
+    
+});
 
 require __DIR__."/auth.php";

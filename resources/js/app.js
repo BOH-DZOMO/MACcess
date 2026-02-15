@@ -1,21 +1,36 @@
 import './bootstrap';
-
-// import $ from 'jquery';
 import Alpine from 'alpinejs';
 
 
 
 window.Alpine = Alpine;
 
+
+Alpine.data('themeHandler', () => ({
+    darkMode: false,
+    sidebarOpen: false,
+
+    init() {
+        // Load saved theme
+        const saved = localStorage.getItem('theme')
+
+        if (saved === 'dark') {
+            this.darkMode = true
+        } else if (saved === 'light') {
+            this.darkMode = false
+        } else {
+            // System preference fallback
+            this.darkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+        }
+    },
+
+    toggleTheme() {
+        this.darkMode = !this.darkMode
+        localStorage.setItem('theme', this.darkMode ? 'dark' : 'light')
+    }
+}))
+
 Alpine.start();
 
 
-// window.$ = window.jQuery = $;
-
-// // helpful debug
-// console.log('app.js loaded — jQuery present?', !!window.jQuery);
-
-// // import any jQuery plugins AFTER exposing jQuery
-// import 'select2';
-// import 'select2/dist/css/select2.min.css';
 

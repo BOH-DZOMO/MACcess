@@ -12,7 +12,7 @@ class OfficialRoomController extends Controller
      */
     public function index()
     {
-        
+        return view('room.official');
     }
 
     /**
@@ -20,7 +20,7 @@ class OfficialRoomController extends Controller
      */
     public function create()
     {
-        return view('room.official');
+        // return view('room.official');
     }
 
     /**

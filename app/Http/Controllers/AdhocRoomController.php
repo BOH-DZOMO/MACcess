@@ -12,7 +12,7 @@ class AdhocRoomController extends Controller
      */
     public function index()
     {
-        //
+         return view("room.adhoc");
     }
 
     /**
@@ -20,7 +20,7 @@ class AdhocRoomController extends Controller
      */
     public function create()
     {
-        return view("room.adhoc");
+        // return view("room.adhoc");
     }
 
     /**
