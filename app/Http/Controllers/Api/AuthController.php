@@ -12,7 +12,7 @@ use Illuminate\Validation\Rules\Password;
 use Laravel\Sanctum\PersonalAccessToken;
 use Ichtrojan\Otp\Otp;
 use Illuminate\Database\QueryException;
-use App\Mail\emailActivationOtp;
+use App\Mail\EmailActivationOtp;
 use Illuminate\Support\Facades\Mail;
 
 class AuthController extends Controller
@@ -65,7 +65,7 @@ class AuthController extends Controller
         $code = (new Otp)->generate($user->email, 'numeric', 6, 10);
         $token = $user->createToken('auth_token')->plainTextToken;
         if ($token && $code->status) {
-            Mail::to($user->email)->queue(new emailActivationOtp($user->name,$code));
+            Mail::to($user->email)->queue(new EmailActivationOtp($user->name,$code));
             return response()->json([
                 "success" => true,
                 "message" => "User created successfully,",

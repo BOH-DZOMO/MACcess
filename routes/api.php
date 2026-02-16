@@ -13,7 +13,7 @@ Route::middleware("guest")->group(function () {
     Route::post("/register", [RegisteredUserController::class, "store"]);
     Route::post("/login", [AuthenticatedSessionController::class, "store"]);
     Route::post("/activate_account", [RegisteredUserController::class, "activateAccount"]);
-    Route::post("/resend_activation_Otp", [RegisteredUserController::class, "resendActivationOtp"]);
+    Route::post("/resend_activation_Otp", [RegisteredUserController::class, "resendActivationOtp"])->middleware('throttle:3,1');;
 });
 Route::middleware('auth:sanctum')->group(function () {
 

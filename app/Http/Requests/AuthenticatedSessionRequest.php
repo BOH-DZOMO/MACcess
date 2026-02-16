@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Mail\enrollDeviceOtp;
+use App\Mail\EnrollDeviceOtp;
 use App\Models\User;
 use Ichtrojan\Otp\Models\Otp;
 use Illuminate\Foundation\Http\FormRequest;
@@ -96,7 +96,7 @@ class AuthenticatedSessionRequest extends FormRequest
                 $user->device()->update("is_active",false);
                 $code = (new Otp)->generate($user->email, 'numeric', 6, 10);
                 if ( $code->status) {
-                Mail::to($user->email)->queue(new enrollDeviceOtp($user->name,$code->token));
+                Mail::to($user->email)->queue(new EnrollDeviceOtp($user->name,$code->token));
                 return response()->json([
                 "success" => true,
                 "status" => "enroll user",

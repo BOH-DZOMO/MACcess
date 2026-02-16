@@ -9,10 +9,11 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 use Ichtrojan\Otp\Otp;
 use Illuminate\Database\QueryException;
-use App\Mail\emailActivationOtp;
+use App\Mail\EmailActivationOtp;
 use App\Models\Device;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 
 class RegisteredUserController extends Controller
 {
@@ -26,7 +27,7 @@ class RegisteredUserController extends Controller
                 "contact_seq" => "required|digits:9|unique:users,phone_number",
                 "secret_hash" => ["required", Password::defaults()],
                 "bio_flag" => "required|in:male,female",
-                "open_token" => ['required','string']
+                "open_token" => ['required', 'string']
             ],
             [
                 "alias_handle.required" => "Fullname is required.",
@@ -61,44 +62,57 @@ class RegisteredUserController extends Controller
             //
             if ($user) {
                 $device = Device::create([
-                "user_id" => $user->id,
-                "device_uuid" => Str::uuid()->toString(),
-                "public_key" => $data["open_token"]
-            ]);
+                    "user_id" => $user->id,
+                    "device_uuid" => Str::uuid()->toString(),
+                    "public_key" => $data["open_token"]
+                ]);
             }
         } catch (QueryException $e) {
-            return response()->json([               
-                "success"=> false,
-                "message"=> "An error occured.
+            return response()->json([
+                "success" => false,
+                "message" => "An error occured.
                 Account was not created",
-            ],500);
+            ], 500);
         }
         //
 
-        $code = (new Otp)->generate($user->email, 'numeric', 6, 10);
-        if ( $code->status) {
-            Mail::to($user->email)->queue(new emailActivationOtp($user->name,$code->token));
-            return response()->json([
-                "success" => true,
-                "message" => "User account created successfully.
+        try {
+            $code = (new Otp)->generate($user->email, 'numeric', 6, 10);
+            if ($code->status) {
+                Mail::to($user->email)->queue(new EmailActivationOtp($user->name, $code->token));
+                return response()->json([
+                    "success" => true,
+                    "message" => "User account created successfully.
                 An otp code has being sent to your email",
-                // "data" => [
-                //     "code" => $code
-                // ]
-            ],201);
-        } else {
+                    // "data" => [
+                    //     "code" => $code
+                    // ]
+                ], 201);
+            } else {
+                return response()->json(
+                    [
+                        "success" => false,
+                        "message" => "Try again an error occured"
+                    ],
+                    500
+                );
+            }
+        } catch (\Exception $e) {
+            // This will print the EXACT error from Brevo in your Render 'Logs' tab
+            Log::error("Registration Mail Error: " . $e->getMessage());
+
             return response()->json([
                 "success" => false,
-                "message" => "Try again an error occured"]
-            ,500);
-        }     
+                "message" => "Account created, but email failed: " . $e->getMessage()
+            ], 500);
+        }
     }
     // App shows the OTP entry screen
     // app sends otp with email
-     public function activateAccount(Request $request)
+    public function activateAccount(Request $request)
     {
-        
-        $data = $request->validate(["code" => "required|size:6","link_token" => "required|email"]);
+
+        $data = $request->validate(["code" => "required|size:6", "link_token" => "required|email"]);
         // $user = User::with('device:id,is_active,device_uuid')->select('email_verified_at', 'is_active','id','email')->where('email',$data["link_token"])->firstorFail();
         $user = User::with("device")->firstOrFail();
         if (!$user) {
@@ -107,8 +121,8 @@ class RegisteredUserController extends Controller
                 "message" => "Invalid email or verification code."
             ], 404);
         }
-        $token = $user->createToken('auth_token',['*'],now()->addMonths(3))->plainTextToken;
-        $code = (new Otp)->validate($user->email,$data["code"]);
+        $token = $user->createToken('auth_token', ['*'], now()->addMonths(3))->plainTextToken;
+        $code = (new Otp)->validate($user->email, $data["code"]);
         // dd($code);
         if ($code->status && $token) {
             $user->update(["is_active" => true, "email_verified_at" => now()]);
@@ -120,16 +134,15 @@ class RegisteredUserController extends Controller
                     "uuid" => $user->device->device_uuid,
                     "token" => $token,
                 ]
-                ],201);
-        }
-        else {
-              return response()->json([
+            ], 201);
+        } else {
+            return response()->json([
                 "success" => false,
                 "message" => "An error occured, Request for a new token",
                 "error" => [
                     "token" => "Request for a new token(Note: They expire in 10 minutes)",
                 ]
-                ],201);
+            ], 201);
         }
     }
 
@@ -145,16 +158,19 @@ class RegisteredUserController extends Controller
         }
         $code = (new Otp)->generate($user->email, 'numeric', 6, 10);
         if ($code->status) {
-            Mail::to($user->email)->queue(new emailActivationOtp($user->name,$code->token));
+            Mail::to($user->email)->queue(new EmailActivationOtp($user->name, $code->token));
             return response()->json([
                 "success" => true,
                 "message" => "A new otp code has being sent to your email",
-            ],201);
+            ], 201);
         } else {
-            return response()->json([
-                "success" => false,
-                "message" => "Try again an error occured"]
-            ,500);
-        }     
+            return response()->json(
+                [
+                    "success" => false,
+                    "message" => "Try again an error occured"
+                ],
+                500
+            );
+        }
     }
 }

@@ -3,7 +3,7 @@
 use App\Http\Controllers\AdhocRoomController;
 use App\Http\Controllers\Api\RoomController;
 use App\Http\Controllers\OfficialRoomController;
-use App\Mail\emailActivationOtp;
+use App\Mail\EmailActivationOtp;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 
@@ -15,7 +15,7 @@ Route::get('/dashboard', function () {
 });
 
 Route::get("/email",function(){
-    Mail::to('bobsbf4@gmail.com')->queue(new emailActivationOtp("boh dzomo","success"));
+    Mail::to('bobsbf4@gmail.com')->queue(new EmailActivationOtp("boh dzomo","success"));
 });
 
 Route::get("/test1",function(){
