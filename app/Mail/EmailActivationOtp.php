@@ -16,6 +16,8 @@ class EmailActivationOtp extends Mailable
     /**
      * Create a new message instance.
      */
+    public $tries = 3;     // Retry up to 3 times
+    public $backoff = 10;  // Wait 10 seconds before retrying
     public $user;
     public $otp;
     public function __construct($user,$otp)

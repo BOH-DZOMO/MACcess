@@ -18,19 +18,21 @@ return Application::configure(basePath: dirname(__DIR__))
         //
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        // $exceptions->render(function (ValidationException $e, $request) {
-        // return response()->json([
-        //     'status' => 'error',
-        //     'message' => 'Validation failed',
-        //     'errors' => $e->errors(),
-        // ], 422);
-        // });
-        
-        // $exceptions->render(function (AuthenticationException $e, Request $request) {
-        //     return response()->json([
-        //         'status' => 'error',
-        //         'message' => 'Unauthenticated. Invalid or missing token.',
-        //     ], 401);
-        // });
+       // Inside bootstrap/app.php (Laravel 11) or Handler.php
+        $exceptions->render(function (ValidationException $e, Request $request) {
+            return response()->json([
+                "success" => false,
+                "message" => $e->validator->errors()->first(),
+                "data"    => $e->errors(), // Laravel's errors go into your 'data' field
+            ], 422);
+        });
+
+        $exceptions->render(function (Throwable $e, Request $request) {
+            return response()->json([
+                "success" => false,
+                "message" => "Server Error: " . $e->getMessage(),
+                "data"    => null,
+            ], 500);
+        });
     })
     ->create();

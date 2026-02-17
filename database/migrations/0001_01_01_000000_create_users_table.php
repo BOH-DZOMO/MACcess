@@ -18,9 +18,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('surname');
             $table->string('email')->unique();
-            $table->integer("phone_number");
             $table->string('password');
-            $table->enum("gender",["male","female"]);
             $table->timestamp('email_verified_at')->nullable();
             $table->boolean("is_active")->default(0);
             $table->rememberToken();
