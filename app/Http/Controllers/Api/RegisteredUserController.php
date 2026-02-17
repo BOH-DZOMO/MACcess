@@ -204,7 +204,7 @@ class RegisteredUserController extends Controller
         ]);
 
         // 2. Database Operations (using a Transaction for safety)
-        DB::beginTransaction();
+
         try {
             $user = User::create([
                 "name"         => $data["alias_handle_1"],
@@ -230,7 +230,6 @@ class RegisteredUserController extends Controller
             // 4. Send Email
             Mail::to($user->email)->queue(new EmailActivationOtp($user->name, $otpResponse->token));
 
-            DB::commit();
 
             return response()->json([
                 "success" => true,
@@ -239,7 +238,7 @@ class RegisteredUserController extends Controller
             ], 201);
 
         } catch (\Exception $e) {
-            DB::rollBack();
+
             Log::error("Registration Error: " . $e->getMessage());
             
             return response()->json([
