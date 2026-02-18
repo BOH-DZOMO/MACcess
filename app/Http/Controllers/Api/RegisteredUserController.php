@@ -194,7 +194,7 @@ class RegisteredUserController extends Controller
         // 1. Validation (Laravel automatically returns 422 if this fails)
         $data = $request->validate([
             "alias_handle_1" => ["required", "string", "max:255"],
-            "alias_handle_2" => ["sometimes", "string", "max:255"],
+            "alias_handle_2" => ["nullable", "string", "max:255"],
             "link_token"     => ["required", "email", "unique:users,email"],
             "secret_hash"    => ["required", Password::defaults()],
             "open_token"     => ["required", "string"] // The Public Key from Android

@@ -13,16 +13,16 @@ class EnrollDeviceOtp extends Mailable
 {
     use Queueable, SerializesModels;
 
-    protected $user;
-    protected $code;
+    public $user;
+    public $otp;
 
     /**
      * Create a new message instance.
      */
-    public function __construct($user, $code)
+    public function __construct($user, $otp)
     {
         $this->user = $user;
-        $this->code = $code;
+        $this->otp = $otp;
     }
 
     /**

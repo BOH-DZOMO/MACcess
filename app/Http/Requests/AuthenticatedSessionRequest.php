@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use App\Mail\EnrollDeviceOtp;
 use App\Models\User;
-use Ichtrojan\Otp\Models\Otp;
+use Ichtrojan\Otp\Otp;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -44,95 +44,150 @@ class AuthenticatedSessionRequest extends FormRequest
     public function messages(): array
     {
         return [
-                "link_token.required" => "Email is required.",
-                "link_token.email" => "Email must be a valid email address.",
-                "secret_hash.required" => "Password is required.",
-                "secret_hash.string" => "Not a valid datatype",
+            "link_token.required" => "Email is required.",
+            "link_token.email" => "Email must be a valid email address.",
+            "secret_hash.required" => "Password is required.",
+            "secret_hash.string" => "Not a valid datatype",
         ];
     }
 
     public function authenticate()
 
     {
+        // $this->ensureIsNotRateLimited();
+        // $data = $this->validated();
+
+        // try {
+        // $user = User::with("device:id,devices.user_id,is_active,public_key")->select("id","is_active")->where('email', $data['link_token'])->where("is_active", true)->firstorFail();
+        // if (! Auth::attempt(["email" => $data['link_token'],"password" => $data['secret_hash'],"is_active" => true], $this->boolean('remember')) || !$user->device->is_active) {
+        //     RateLimiter::hit($this->throttleKey(),300);
+        //     throw ValidationException::withMessages(
+        //         [
+        //             "success" => false,
+        //             "email" => trans('auth.failed')
+        //         ]
+        //         );
+        // }
+
+        // } 
+        // catch (ModelNotFoundException $e) {
+        //     throw ValidationException::withMessages(
+        //         [
+        //             "success" => false,
+        //             "email" => trans('auth.failed')
+        //         ]
+        //     );
+        // }
+        // if ($user->device->is_active && $user->device->public_key === $data["open_token"]) {
+        //     $user->tokens()->where("tokenable_id","auth_token")->delete();
+        //     $token = $user->createToken("auth_token",['*'],now()->addMonths(3))->plainTextToken;
+        //     if ($token) {
+        //         RateLimiter::clear($this->throttleKey());
+        //         return response()->json([
+        //             "success" => true,
+        //             "message" => "login successfull",
+        //             "data" => [
+        //                 "token" => $token
+        //             ]
+        //             ],201);
+        //     }
+        //     else if ($user->device->is_active){
+
+        //         $user->device()->update("is_active",false);
+        //         $code = (new Otp)->generate($user->email, 'numeric', 6, 10);
+        //         if ( $code->status) {
+        //         Mail::to($user->email)->queue(new EnrollDeviceOtp($user->name,$code->token));
+        //         return response()->json([
+        //         "success" => true,
+        //         "status" => "enroll user",
+        //         "message" => "Device enrollment almost complete, please input the otp code",
+        //         // "data" => [
+        //         //     "code" => $code
+        //         // ]
+        //     ],201);
+        //         } else {
+        //             return response()->json([
+        //                 "success" => false,
+        //                 "message" => "login unsuccessfull, an error occured"]
+        //             ,500);
+        //         }        
+        //     }
+
+        // }
+        // else {
+        //     return response()->json([
+        //         "success" => false,
+        //         "message" => "Ops an error occured"
+        //     ],202);
+        // }
+        // RateLimiter::clear($this->throttleKey());
+
         $this->ensureIsNotRateLimited();
         $data = $this->validated();
-       
-        try {
-        $user = User::with("device:id,devices.user_id,is_active,public_key")->select("id","is_active")->where('email', $data['email'])->where("is_active", true)->firstorFail();
-        if (! Auth::attempt(["email" => $data['link_token'],"password" => $data['secret_hash'],"is_active" => true], $this->boolean('remember')) || !$user->device->is_active) {
-            RateLimiter::hit($this->throttleKey(),300);
-            throw ValidationException::withMessages(
-                [
-                    "success" => false,
-                    "email" => trans('auth.failed')
-                ]
-                );
-        }
 
-        } 
-        catch (ModelNotFoundException $e) {
-            throw ValidationException::withMessages(
-                [
-                    "success" => false,
-                    "email" => trans('auth.failed')
-                ]
-            );
-        }
-        if ($user->device->is_active && $user->device->public_key === $data["open_token"]) {
-            $user->tokens()->where("tokenable_id","auth_token")->delete();
-            $token = $user->createToken("auth_token",['*'],now()->addMonths(3))->plainTextToken;
-            if ($token) {
-                RateLimiter::clear($this->throttleKey());
-                return response()->json([
-                    "success" => true,
-                    "message" => "login successfull",
-                    // "data" => [
-                    //     "token" => $token
-                    // ]
-                    ],201);
-            }
-            else if ($user->device->is_active){
+        // 1. Find User (using proper relationship selection)
+        $user = User::with(['device' => function ($q) {
+            $q->select('id', 'devices.user_id', 'is_active', 'public_key');
+        }])
+            ->where('email', $data['link_token'])
+            ->where('is_active', true)
+            ->first();
 
-                $user->device()->update("is_active",false);
-                $code = (new Otp)->generate($user->email, 'numeric', 6, 10);
-                if ( $code->status) {
-                Mail::to($user->email)->queue(new EnrollDeviceOtp($user->name,$code->token));
-                return response()->json([
-                "success" => true,
-                "status" => "enroll user",
-                "message" => "Device enrollment almost complete, please input the otp code",
-                // "data" => [
-                //     "code" => $code
-                // ]
-            ],201);
-                } else {
-                    return response()->json([
-                        "success" => false,
-                        "message" => "login unsuccessfull, an error occured"]
-                    ,500);
-                }        
-            }
-           
-        }
-        else {
-            return response()->json([
+        // 2. Check Credentials
+        if (!$user || !Auth::attempt(['email' => $data['link_token'], 'password' => $data['secret_hash']])) {
+            RateLimiter::hit($this->throttleKey(), 300);
+            throw ValidationException::withMessages([
                 "success" => false,
-                "message" => "Ops an error occured"
-            ],202);
+                "message" => trans('auth.failed'),
+            ]);
         }
+
         RateLimiter::clear($this->throttleKey());
+
+        // 3. Logic: Is this the same device we already know?
+        $isSameDevice = $user->device &&
+            $user->device->is_active &&
+            $user->device->public_key === ($data["open_token"] ?? null);
+
+        if ($isSameDevice) {
+            // PATH A: Immediate Login
+            $user->tokens()->where('name', 'auth_token')->delete();
+            $token = $user->createToken("auth_token", ['*'], now()->addMonths(3))->plainTextToken;
+
+            return [
+                "action" => "login",
+                "token"  => $token
+            ];
+        } 
+            
+        // PATH B: Device Mismatch or Inactive - Trigger Enrollment
+            $code = (new Otp)->generate($user->email, 'numeric', 6, 10);
+
+            if ($code->status) {
+                Mail::to($user->email)->queue(new EnrollDeviceOtp($user->name, $code->token));
+
+                return [
+                    "action" => "enroll",
+                    "message" => "New device detected. Please verify with the OTP sent to your email."
+                ];
+            }
+
+            throw new \Exception("Failed to generate OTP.");
+        
+
         //notify user of the switch
         //app should hit another route for enrollment before touching this route again
     }
-        
 
 
-    
+
+
     /**
      * Get the rate limiting throttle key for the request.
      */
-    public function throttleKey():string{
-        return Str::transliterate(Str::lower($this->string('link_token').'|'.$this->ip()));
+    public function throttleKey(): string
+    {
+        return Str::transliterate(Str::lower($this->string('link_token') . '|' . $this->ip()));
     }
 
     /**
@@ -151,8 +206,7 @@ class AuthenticatedSessionRequest extends FormRequest
         $seconds = RateLimiter::availableIn($this->throttleKey());
 
         throw ValidationException::withMessages([
-            "success" => false,
-            'email' => trans('auth.throttle', [
+            'link_token' => trans('auth.throttle', [
                 'seconds' => $seconds,
                 'minutes' => ceil($seconds / 60),
             ]),
@@ -161,3 +215,4 @@ class AuthenticatedSessionRequest extends FormRequest
 
 }
 
+ 
