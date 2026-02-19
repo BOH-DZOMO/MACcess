@@ -22,9 +22,9 @@ class="fixed md:static inset-y-0 left-0 z-40 w-64
 
     {{-- Nav --}}
     <nav class="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
-        <x-sidebar-link icon="dashboard" active>Dashboard</x-sidebar-link>
-        <x-sidebar-link icon="meeting_room" :href="route('rooms.official.index')" >Official Rooms</x-sidebar-link>
-        <x-sidebar-link icon="meeting_room" :href="route('rooms.adhoc.index')">Adhoc Rooms</x-sidebar-link>
+        <x-sidebar-link icon="dashboard" :href="route('dashboard')" :active="request()->routeIs('dashboard')">Dashboard</x-sidebar-link>
+        <x-sidebar-link icon="meeting_room" :href="route('rooms.official.index')" :active="request()->routeIs('rooms.official.index')" >Official Rooms</x-sidebar-link>
+        <x-sidebar-link icon="meeting_room" :href="route('rooms.adhoc.index')" :active="request()->routeIs('rooms.adhoc.index')">Adhoc Rooms</x-sidebar-link>
         <x-sidebar-link icon="location_on">Locations</x-sidebar-link>
         <x-sidebar-link icon="bar_chart">Reports</x-sidebar-link>
         <x-sidebar-link icon="settings">Settings</x-sidebar-link>

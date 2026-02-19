@@ -10,8 +10,10 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
-Route::get('/dashboard', function () {
-    return view('dashboard');
+
+
+Route::get('/testing', function () {
+    return view('testing');
 });
 
 Route::get("/email",function(){
@@ -30,13 +32,19 @@ Route::get("/test3",function(){
 Route::get("/test4",function(){
     return view('or3');
 });
+Route::get("/test5",function(){
+    return view('of');
+});
+Route::get("/test6",function(){
+    return view('ad');
+});
 Route::get("/report",function(){
     return view('report');
 });
 
 Route::get('/dashboard', function () {
     return view('dashboard');
-});
+})->name('dashboard');
 // ->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::prefix('rooms')->name('rooms.')->group(function () {
@@ -52,5 +60,7 @@ Route::prefix('rooms')->name('rooms.')->group(function () {
     Route::post('/adhoc', [AdhocRoomController::class, "store"])->name('adhoc.store');
     
 });
+
+
 
 require __DIR__."/auth.php";
