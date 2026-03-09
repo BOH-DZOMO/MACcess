@@ -1,124 +1,23 @@
-<!DOCTYPE html>
-<html class="light" lang="en">
+<x-app-layout title="Create Official Room">
+    {{-- <x-page.header title="Official Rooms Management" subtitle="Manage and view all official attendance locations and their current status.">
+        <x-slot:actions>
+            <button
+                class="flex items-center justify-center gap-2
+                   bg-primary hover:bg-blue-700
+                   text-white px-5 py-2.5 rounded-lg
+                   shadow-sm hover:shadow
+                   transition-all font-medium text-sm group">
+                <span
+                    class="material-symbols-outlined text-[20px]
+                       group-hover:rotate-90 transition-transform">
+                    add
+                </span>
+                <span>Create New Room</span>
+            </button>
+        </x-slot:actions>
+    </x-page.header> --}}
 
-<head>
-    <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Create Official Room - Attendify</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap"
-        rel="stylesheet" />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
-        rel="stylesheet" />
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "primary": "#2b6cee",
-                        "background-light": "#f6f6f8",
-                        "background-dark": "#101622",
-                    },
-                    fontFamily: {
-                        "display": ["Inter", "sans-serif"]
-                    },
-                    borderRadius: {
-                        "DEFAULT": "0.25rem",
-                        "lg": "0.5rem",
-                        "xl": "0.75rem",
-                        "2xl": "1rem",
-                        "full": "9999px"
-                    },
-                },
-            },
-        }
-    </script>
-</head>
-
-<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-white overflow-hidden">
-    <div class="flex h-screen w-full">
-        <aside
-            class="hidden w-64 flex-col border-r border-[#e7ebf3] bg-white dark:bg-[#1e2736] dark:border-[#2d3748] lg:flex">
-            <div class="flex h-full flex-col justify-between p-4">
-                <div class="flex flex-col gap-4">
-                    <div class="flex items-center gap-3 px-2 py-3">
-                        <div
-                            class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-8 bg-primary/10 flex items-center justify-center text-primary">
-                            <span class="material-symbols-outlined text-[20px]">check_circle</span>
-                        </div>
-                        <div class="flex flex-col">
-                            <h1 class="text-slate-900 dark:text-white text-base font-bold leading-none">Attendify</h1>
-                            <p class="text-slate-500 dark:text-slate-400 text-xs font-medium mt-1">Admin Console</p>
-                        </div>
-                    </div>
-                    <nav class="flex flex-col gap-1">
-                        <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800 transition-colors"
-                            href="#">
-                            <span class="material-symbols-outlined text-[24px]">dashboard</span>
-                            <p class="text-sm font-medium">Dashboard</p>
-                        </a>
-                        <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary/10 text-primary dark:bg-primary/20"
-                            href="#">
-                            <span
-                                class="material-symbols-outlined text-[24px] font-variation-settings-'FILL'_1">meeting_room</span>
-                            <p class="text-sm font-bold">My Rooms</p>
-                        </a>
-                        <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800 transition-colors"
-                            href="#">
-                            <span class="material-symbols-outlined text-[24px]">analytics</span>
-                            <p class="text-sm font-medium">Reports</p>
-                        </a>
-                        <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800 transition-colors"
-                            href="#">
-                            <span class="material-symbols-outlined text-[24px]">settings</span>
-                            <p class="text-sm font-medium">Settings</p>
-                        </a>
-                    </nav>
-                </div>
-                <div class="flex flex-col gap-2 border-t border-[#e7ebf3] dark:border-[#2d3748] pt-4">
-                    <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-800"
-                        href="#">
-                        <span class="material-symbols-outlined text-[24px]">help</span>
-                        <p class="text-sm font-medium">Help Center</p>
-                    </a>
-                </div>
-            </div>
-        </aside>
-        <div class="flex flex-1 flex-col h-full overflow-hidden relative">
-            <header
-                class="flex h-16 items-center justify-between border-b border-[#e7ebf3] bg-white px-6 dark:bg-[#1e2736] dark:border-[#2d3748] shrink-0 z-20">
-                <div class="flex items-center gap-4">
-                    <button class="lg:hidden text-slate-500 hover:text-slate-700">
-                        <span class="material-symbols-outlined">menu</span>
-                    </button>
-                    <h2 class="text-lg font-bold tracking-tight text-slate-900 dark:text-white">Attendance System</h2>
-                </div>
-                <div class="flex items-center gap-6">
-                    <button
-                        class="relative text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-white">
-                        <span class="material-symbols-outlined text-[24px]">notifications</span>
-                        <span
-                            class="absolute top-0 right-0 size-2 bg-red-500 rounded-full border-2 border-white dark:border-[#1e2736]"></span>
-                    </button>
-                    <div class="h-8 w-px bg-slate-200 dark:bg-slate-700"></div>
-                    <div class="flex items-center gap-3">
-                        <div class="text-right hidden sm:block">
-                            <p class="text-sm font-bold text-slate-900 dark:text-white">Alex Morgan</p>
-                            <p class="text-xs text-slate-500 dark:text-slate-400">Administrator</p>
-                        </div>
-                        <div class="size-9 rounded-full bg-slate-200 bg-center bg-cover border border-slate-200 dark:border-slate-700"
-                            data-alt="User avatar profile picture"
-                            style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAQrENUnleNzDFthURI8YvkgIXqkrZfOkqJjjYyvCWOZnMGtDVbNI4DqvORXaGBr2CCr7ede04VcuQjduAflKH5MTJ1V3HS6totcyaHDARAPau8NJ_nTnqr0EYNZeObf1_Ryrl2-m3uO0ClpTpuDkpAstBK7-HjlsMj6j4icXTUgF1irJJnUgC1HqJGyGCBqS3Uhvi9iz8fzbmBE71BFtr2paoqTmahcDvS8_XZBD5onvb1g72v3IjcNgdfFoEWkBwhQzP3JptEx10');">
-                        </div>
-                    </div>
-                </div>
-            </header>
-            <main class="flex-1 overflow-y-auto bg-background-light dark:bg-background-dark p-6 lg:px-10 pb-20">
-                <div class="mx-auto max-w-5xl">
+                    <div class="mx-auto max-w-5xl">
                     <nav class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 mb-6">
                         <a class="hover:text-primary transition-colors" href="#">Rooms</a>
                         <span class="material-symbols-outlined text-[16px]">chevron_right</span>
@@ -127,9 +26,7 @@
                     <div class="mb-8">
                         <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
                             <div>
-                                <h1 class="text-3xl font-black tracking-tight text-slate-900 dark:text-white">Create
-                                    Official Room</h1>
-                                <p class="mt-2 text-slate-500 dark:text-slate-400">Step 1 of 3: Define basic details,
+                                <p class="mt-2 text-slate-500 dark:text-slate-400 text-lg">Step 1 of 2: Define basic details,
                                     connectivity, and location settings.</p>
                             </div>
                         </div>
@@ -139,19 +36,12 @@
                                     <div
                                         class="flex size-6 items-center justify-center rounded-full bg-primary text-[12px] font-bold text-white">
                                         1</div>
-                                    <span class="text-sm font-bold text-primary">Basic Info</span>
+                                    <span class="text-sm font-bold text-primary">Basic Info & Configuration</span>
                                 </div>
                                 <div class="flex items-center gap-2 border-b-[3px] border-transparent pb-3 px-1">
                                     <div
                                         class="flex size-6 items-center justify-center rounded-full bg-slate-200 text-[12px] font-bold text-slate-500 dark:bg-slate-700 dark:text-slate-400">
                                         2</div>
-                                    <span
-                                        class="text-sm font-medium text-slate-500 dark:text-slate-400">Configuration</span>
-                                </div>
-                                <div class="flex items-center gap-2 border-b-[3px] border-transparent pb-3 px-1">
-                                    <div
-                                        class="flex size-6 items-center justify-center rounded-full bg-slate-200 text-[12px] font-bold text-slate-500 dark:bg-slate-700 dark:text-slate-400">
-                                        3</div>
                                     <span class="text-sm font-medium text-slate-500 dark:text-slate-400">Review</span>
                                 </div>
                             </div>
@@ -407,9 +297,5 @@
                         </button>
                     </div>
                 </div>
-            </main>
-        </div>
-    </div>
-</body>
-
-</html>
+       
+</x-app-layout>

@@ -17,7 +17,7 @@
         </button>
 
         {{-- Page title / breadcrumb --}}
-        <div class="hidden sm:flex text-sm text-slate-500 dark:text-slate-400 font-medium">
+        <div class="hidden sm:flex text-lg font-bold tracking-tight text-slate-900 dark:text-white">
             {{ $title ?? 'Dashboard' }}
         </div>
     </div>
