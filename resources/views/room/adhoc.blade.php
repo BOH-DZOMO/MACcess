@@ -1,7 +1,7 @@
 <x-app-layout title="Adhoc Rooms">
     <x-page.header title="Adhoc Rooms Management" subtitle="Manage temporary rooms for ad-hoc meetings and events.">
         <x-slot:actions>
-            <button
+            <a href="{{ route('rooms.adhoc.create') }}"
                 class="flex items-center justify-center gap-2
                    bg-primary hover:bg-blue-700
                    text-white px-5 py-2.5 rounded-lg
@@ -12,8 +12,8 @@
                        group-hover:rotate-90 transition-transform">
                     add
                 </span>
-                <span>Create New Room</span>
-            </button>
+                Create New Room
+            </a>
         </x-slot:actions>
     </x-page.header>
 

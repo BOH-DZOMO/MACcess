@@ -25,8 +25,8 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Model::preventLazyLoading();
-        if (config('app.env') === 'production') {
-        URL::forceScheme('https');
+        if (str_starts_with(config('app.url'), 'https://') || config('app.env') === 'production') {
+            URL::forceScheme('https');
         }
 
         Mail::extend('brevo', function (array $config) {
@@ -38,7 +38,5 @@ class AppServiceProvider extends ServiceProvider
                 )
             );
         });
-
-
     }
 }

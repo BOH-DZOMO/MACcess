@@ -20,7 +20,7 @@ class AdhocRoomController extends Controller
      */
     public function create()
     {
-        // return view("room.adhoc");
+        return view("room.create_adhoc");
     }
 
     /**
