@@ -1,8 +1,8 @@
 <?php
 
 use App\Http\Controllers\AdhocRoomController;
-use App\Http\Controllers\Api\RoomController;
 use App\Http\Controllers\OfficialRoomController;
+use App\Http\Controllers\ReportController;
 use App\Mail\EmailActivationOtp;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
@@ -38,9 +38,7 @@ Route::get("/test5",function(){
 Route::get("/test6",function(){
     return view('ad');
 });
-Route::get("/report",function(){
-    return view('report');
-});
+Route::get("/report",[ReportController::class,"index"])->name("report.index");
 
 Route::get('/dashboard', function () {
     return view('dashboard');

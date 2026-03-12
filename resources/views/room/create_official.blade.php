@@ -41,14 +41,14 @@
                     <label class="text-sm font-medium text-slate-700 dark:text-slate-300" for="roomName">Room Name <span
                             class="text-red-500">*</span></label>
                     <input
-                        class="w-full rounded-lg border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:border-primary focus:ring-1 focus:ring-primary dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:placeholder-slate-500 transition-shadow"
+                        class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:placeholder-slate-500 transition-shadow"
                         id="roomName" placeholder="e.g. Main Conference Hall A" type="text" />
                 </div>
                 <div class="col-span-1 md:col-span-2 space-y-2">
                     <label class="text-sm font-medium text-slate-700 dark:text-slate-300"
                         for="description">Description</label>
                     <textarea
-                        class="w-full rounded-lg border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:border-primary focus:ring-1 focus:ring-primary dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:placeholder-slate-500 resize-none transition-shadow"
+                        class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:placeholder-slate-500 resize-none transition-shadow"
                         id="description" placeholder="Briefly describe the purpose of this attendance room..." rows="3"></textarea>
                 </div>
             </div>
@@ -67,7 +67,7 @@
                     </div>
                     <div class="relative">
                         <input
-                            class="w-full rounded-lg border-slate-300 bg-white px-3 py-2.5 pl-10 text-sm text-slate-900 placeholder-slate-400 focus:border-primary focus:ring-1 focus:ring-primary dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:placeholder-slate-500 transition-shadow"
+                            class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 pl-10 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:placeholder-slate-500 transition-shadow"
                             id="wifiBSSID" placeholder="xx:xx:xx:xx:xx:xx" type="text" />
                         <span
                             class="material-symbols-outlined absolute left-3 top-2.5 text-slate-400 text-[20px]">wifi</span>
@@ -97,46 +97,29 @@
                         <div class="space-y-2">
                             <p
                                 class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                                Additional Verification (Select One)</p>
-                            <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                                Additional Verification(select one or more)</p>
+                            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-2">
                                 <label class="relative cursor-pointer group">
-                                    <input checked="" class="peer sr-only" name="verification_method" type="radio"
-                                        value="none" />
-                                    <div
-                                        class="flex h-full flex-col items-center justify-center gap-2 rounded-xl border-2 border-slate-200 bg-white p-4 transition-all hover:bg-slate-50 peer-checked:border-primary peer-checked:bg-primary/5 peer-checked:text-primary dark:border-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:peer-checked:bg-primary/10">
-                                        <span
-                                            class="material-symbols-outlined text-3xl text-slate-400 transition-colors peer-checked:text-primary group-hover:text-slate-600 dark:group-hover:text-slate-300">block</span>
-                                        <span class="text-xs font-bold">None</span>
+                                    <input class="peer sr-only" name="verification_type[]" type="checkbox" value="fingerprint" />
+                                    <div class="flex flex-col h-full rounded-xl border-2 border-slate-200 bg-white p-5 transition-all hover:bg-slate-50 peer-checked:border-primary peer-checked:bg-primary/5 peer-checked:text-primary dark:border-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:peer-checked:bg-primary/10">
+                                        <div class="flex justify-between items-start mb-4">
+                                            <span class="material-symbols-outlined text-[32px] text-slate-400 dark:text-slate-500 peer-checked:text-primary transition-colors">fingerprint</span>
+                                            <span class="material-symbols-outlined text-primary text-[20px] opacity-0 peer-checked:opacity-100 transition-opacity">check</span>
+                                        </div>
+                                        <span class="font-bold text-sm block mb-1">Fingerprint</span>
+                                        <span class="text-xs text-slate-500 dark:text-slate-400">Dedicated Scanner Hardware</span>
                                     </div>
                                 </label>
+
                                 <label class="relative cursor-pointer group">
-                                    <input class="peer sr-only" name="verification_method" type="radio"
-                                        value="biometric" />
-                                    <div
-                                        class="flex h-full flex-col items-center justify-center gap-2 rounded-xl border-2 border-slate-200 bg-white p-4 transition-all hover:bg-slate-50 peer-checked:border-primary peer-checked:bg-primary/5 peer-checked:text-primary dark:border-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:peer-checked:bg-primary/10">
-                                        <span
-                                            class="material-symbols-outlined text-3xl text-slate-400 transition-colors peer-checked:text-primary group-hover:text-slate-600 dark:group-hover:text-slate-300">fingerprint</span>
-                                        <span class="text-xs font-bold">Biometric</span>
-                                    </div>
-                                </label>
-                                <label class="relative cursor-pointer group">
-                                    <input class="peer sr-only" name="verification_method" type="radio"
-                                        value="qr" />
-                                    <div
-                                        class="flex h-full flex-col items-center justify-center gap-2 rounded-xl border-2 border-slate-200 bg-white p-4 transition-all hover:bg-slate-50 peer-checked:border-primary peer-checked:bg-primary/5 peer-checked:text-primary dark:border-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:peer-checked:bg-primary/10">
-                                        <span
-                                            class="material-symbols-outlined text-3xl text-slate-400 transition-colors peer-checked:text-primary group-hover:text-slate-600 dark:group-hover:text-slate-300">qr_code_scanner</span>
-                                        <span class="text-xs font-bold">QR Code</span>
-                                    </div>
-                                </label>
-                                <label class="relative cursor-pointer group">
-                                    <input class="peer sr-only" name="verification_method" type="radio"
-                                        value="otp" />
-                                    <div
-                                        class="flex h-full flex-col items-center justify-center gap-2 rounded-xl border-2 border-slate-200 bg-white p-4 transition-all hover:bg-slate-50 peer-checked:border-primary peer-checked:bg-primary/5 peer-checked:text-primary dark:border-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:peer-checked:bg-primary/10">
-                                        <span
-                                            class="material-symbols-outlined text-3xl text-slate-400 transition-colors peer-checked:text-primary group-hover:text-slate-600 dark:group-hover:text-slate-300">pin</span>
-                                        <span class="text-xs font-bold">OTP</span>
+                                    <input class="peer sr-only" name="verification_type[]" type="checkbox" value="qr" />
+                                    <div class="flex flex-col h-full rounded-xl border-2 border-slate-200 bg-white p-5 transition-all hover:bg-slate-50 peer-checked:border-primary peer-checked:bg-primary/5 peer-checked:text-primary dark:border-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:peer-checked:bg-primary/10">
+                                        <div class="flex justify-between items-start mb-4">
+                                            <span class="material-symbols-outlined text-[32px] text-slate-400 dark:text-slate-500 peer-checked:text-primary transition-colors">qr_code_scanner</span>
+                                            <span class="material-symbols-outlined text-primary text-[20px] opacity-0 peer-checked:opacity-100 transition-opacity">check</span>
+                                        </div>
+                                        <span class="font-bold text-sm block mb-1">QR Code</span>
+                                        <span class="text-xs text-slate-500 dark:text-slate-400">Scan dynamic code on entry</span>
                                     </div>
                                 </label>
                             </div>
@@ -171,7 +154,7 @@
                         <span class="material-symbols-outlined text-slate-400">search</span>
                     </div>
                     <input x-model="searchQuery" @keydown.enter.prevent="searchAddress()"
-                        class="block w-full rounded-lg border-slate-300 bg-slate-50 py-3 pl-10 pr-28 text-sm placeholder-slate-500 focus:border-primary focus:bg-white focus:ring-1 focus:ring-primary dark:border-slate-600 dark:bg-slate-800 dark:placeholder-slate-400 dark:text-white transition-all shadow-sm"
+                        class="block w-full rounded-lg border-slate-200 bg-slate-50 py-3 pl-10 pr-28 text-sm placeholder-slate-500 focus:border-primary focus:bg-white focus:ring-1 focus:ring-primary dark:border-slate-600 dark:bg-slate-800 dark:placeholder-slate-400 dark:text-white transition-all shadow-sm"
                         placeholder="Search address, city or coordinates..." type="text" />
                     {{-- Locate Me (GPS) --}}
                     <button type="button" @click="locateMe()" :disabled="locating"
@@ -255,14 +238,14 @@
                                     <span
                                         class="absolute left-2 top-1.5 text-[10px] text-slate-400 font-bold">LAT</span>
                                     <input x-model="lat" @change="onManualCoordChange()"
-                                        class="w-full pl-8 pr-2 py-1.5 text-xs font-mono rounded border-slate-200 bg-white text-slate-700 focus:border-primary focus:ring-1 focus:ring-primary dark:bg-slate-900 dark:border-slate-600 dark:text-slate-300 transition-shadow"
+                                        class="w-full pl-8 pr-2 py-1.5 text-xs font-mono rounded border-slate-200 bg-white text-slate-700 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary dark:bg-slate-900 dark:border-slate-600 dark:text-slate-300 transition-shadow"
                                         type="text" placeholder="—" />
                                 </div>
                                 <div class="relative w-full">
                                     <span
                                         class="absolute left-2 top-1.5 text-[10px] text-slate-400 font-bold">LNG</span>
                                     <input x-model="lng" @change="onManualCoordChange()"
-                                        class="w-full pl-8 pr-2 py-1.5 text-xs font-mono rounded border-slate-200 bg-white text-slate-700 focus:border-primary focus:ring-1 focus:ring-primary dark:bg-slate-900 dark:border-slate-600 dark:text-slate-300 transition-shadow"
+                                        class="w-full pl-8 pr-2 py-1.5 text-xs font-mono rounded border-slate-200 bg-white text-slate-700 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary dark:bg-slate-900 dark:border-slate-600 dark:text-slate-300 transition-shadow"
                                         type="text" placeholder="—" />
                                 </div>
                             </div>
