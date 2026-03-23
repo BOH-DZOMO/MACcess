@@ -186,77 +186,127 @@
                             <h4 class="font-bold text-sm">Geofence Settings</h4>
                         </div>
 
-                        {{-- Shape Selector --}}
+                        {{-- Shape Selector (Circle / Polygon only) --}}
                         <div class="space-y-3">
-                            <label
-                                class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Shape</label>
-                            <div class="grid grid-cols-3 gap-2">
-                                <template
-                                    x-for="s in [
-                                                { key: 'circle',  icon: 'circle',  label: 'Circle'  },
-                                                { key: 'square',  icon: 'square',  label: 'Square'  },
-                                                { key: 'polygon', icon: 'pentagon', label: 'Polygon' },
-                                            ]"
-                                    :key="s.key">
-                                    <button type="button" @click="shape = s.key; updateOverlay()"
-                                        :class="shape === s.key ?
-                                            'border-2 border-primary bg-primary/5 text-primary dark:bg-primary/20' :
-                                            'border border-slate-200 bg-white text-slate-600 hover:border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-300'"
-                                        class="flex flex-col items-center justify-center gap-1 rounded-lg p-2 transition-colors">
-                                        <span class="material-symbols-outlined text-[20px]" x-text="s.icon"></span>
-                                        <span class="text-[10px] font-bold" x-text="s.label"></span>
-                                    </button>
-                                </template>
+                            <label class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Shape</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <button type="button" @click="switchShape('circle')"
+                                    :class="shape === 'circle'
+                                        ? 'border-2 border-primary bg-primary/5 text-primary dark:bg-primary/20'
+                                        : 'border border-slate-200 bg-white text-slate-600 hover:border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-300'"
+                                    class="flex flex-col items-center justify-center gap-1 rounded-lg p-2 transition-colors">
+                                    <span class="material-symbols-outlined text-[20px]">circle</span>
+                                    <span class="text-[10px] font-bold">Circle</span>
+                                </button>
+                                <button type="button" @click="switchShape('polygon')"
+                                    :class="shape === 'polygon'
+                                        ? 'border-2 border-primary bg-primary/5 text-primary dark:bg-primary/20'
+                                        : 'border border-slate-200 bg-white text-slate-600 hover:border-slate-300 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-300'"
+                                    class="flex flex-col items-center justify-center gap-1 rounded-lg p-2 transition-colors">
+                                    <span class="material-symbols-outlined text-[20px]">pentagon</span>
+                                    <span class="text-[10px] font-bold">Polygon</span>
+                                </button>
                             </div>
                         </div>
 
-                        {{-- Radius Slider --}}
-                        <div class="space-y-4">
-                            <div class="flex justify-between items-center">
-                                <label
-                                    class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Area
-                                    Control</label>
+                        {{-- ── CIRCLE MODE controls ── --}}
+                        <div x-show="shape === 'circle'" x-transition class="space-y-5">
+
+                            {{-- Radius Slider --}}
+                            <div class="space-y-4">
+                                <div class="flex justify-between items-center">
+                                    <label class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Area Control</label>
+                                    <span class="text-xs font-bold text-primary bg-primary/10 px-2 py-1 rounded"
+                                        x-text="radius + ' meters'"></span>
+                                </div>
+                                <input x-model.number="radius" @input="updateOverlay()"
+                                    class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-primary dark:bg-slate-700"
+                                    max="500" min="10" type="range" />
+                                <div class="flex justify-between text-[10px] text-slate-400">
+                                    <span>10m</span>
+                                    <span>500m</span>
+                                </div>
+                            </div>
+
+                            {{-- GPS Coordinate Inputs --}}
+                            <div class="space-y-2">
+                                <label class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">GPS Coordinates</label>
+                                <div class="flex gap-2">
+                                    <div class="relative w-full">
+                                        <span class="absolute left-2 top-1.5 text-[10px] text-slate-400 font-bold">LAT</span>
+                                        <input x-model="lat" @change="onManualCoordChange()"
+                                            class="w-full pl-8 pr-2 py-1.5 text-xs font-mono rounded border-slate-200 bg-white text-slate-700 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary dark:bg-slate-900 dark:border-slate-600 dark:text-slate-300 transition-shadow"
+                                            type="text" placeholder="—" />
+                                    </div>
+                                    <div class="relative w-full">
+                                        <span class="absolute left-2 top-1.5 text-[10px] text-slate-400 font-bold">LNG</span>
+                                        <input x-model="lng" @change="onManualCoordChange()"
+                                            class="w-full pl-8 pr-2 py-1.5 text-xs font-mono rounded border-slate-200 bg-white text-slate-700 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary dark:bg-slate-900 dark:border-slate-600 dark:text-slate-300 transition-shadow"
+                                            type="text" placeholder="—" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- ── POLYGON MODE controls ── --}}
+                        <div x-show="shape === 'polygon'" x-transition class="space-y-4">
+
+                            {{-- Vertex counter --}}
+                            <div class="flex items-center justify-between">
+                                <label class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Vertices</label>
                                 <span class="text-xs font-bold text-primary bg-primary/10 px-2 py-1 rounded"
-                                    x-text="radius + ' meters'"></span>
+                                    x-text="polygonPoints.length + ' point' + (polygonPoints.length !== 1 ? 's' : '') + (polygonClosed ? ' (closed)' : '')"></span>
                             </div>
-                            <input x-model.number="radius" @input="updateOverlay()"
-                                class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-primary dark:bg-slate-700"
-                                max="500" min="10" type="range" />
-                            <div class="flex justify-between text-[10px] text-slate-400">
-                                <span>10m</span>
-                                <span>500m</span>
+
+                            {{-- Instructions --}}
+                            <div class="rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 p-3 text-xs text-blue-700 dark:text-blue-300 space-y-1">
+                                <p class="font-semibold">How to draw:</p>
+                                <ol class="list-decimal list-inside space-y-0.5">
+                                    <li>Click the map to add each corner</li>
+                                    <li>Add at least 3 vertices</li>
+                                    <li>Click <strong>Close</strong> to finish the shape</li>
+                                </ol>
                             </div>
+
+                            {{-- Action buttons --}}
+                            <div class="flex flex-col gap-2">
+                                {{-- Close polygon --}}
+                                <button type="button" @click="closePolygon()"
+                                    :disabled="polygonPoints.length < 3 || polygonClosed"
+                                    class="flex items-center justify-center gap-1.5 w-full rounded-lg bg-primary text-white text-xs font-bold py-2 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed hover:bg-blue-600">
+                                    <span class="material-symbols-outlined text-[16px]">check_circle</span>
+                                    Close &amp; Finish Polygon
+                                </button>
+                                {{-- Undo last point --}}
+                                <button type="button" @click="undoLastVertex()"
+                                    :disabled="polygonPoints.length === 0 || polygonClosed"
+                                    class="flex items-center justify-center gap-1.5 w-full rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-semibold py-2 transition-colors hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed">
+                                    <span class="material-symbols-outlined text-[16px]">undo</span>
+                                    Undo Last Point
+                                </button>
+                                {{-- Clear & restart --}}
+                                <button type="button" @click="clearPolygon()"
+                                    :disabled="polygonPoints.length === 0"
+                                    class="flex items-center justify-center gap-1.5 w-full rounded-lg border border-red-200 dark:border-red-800 bg-white dark:bg-slate-800 text-red-500 dark:text-red-400 text-xs font-semibold py-2 transition-colors hover:bg-red-50 dark:hover:bg-red-900/20 disabled:opacity-40 disabled:cursor-not-allowed">
+                                    <span class="material-symbols-outlined text-[16px]">delete</span>
+                                    Clear &amp; Restart
+                                </button>
+                            </div>
+
+                            {{-- Validation message if not yet closed --}}
+                            <p x-show="polygonPoints.length > 0 && !polygonClosed"
+                               class="text-[10px] text-amber-600 dark:text-amber-400 text-center">
+                                <span x-show="polygonPoints.length < 3">Add at least <span x-text="3 - polygonPoints.length"></span> more point(s) to close.</span>
+                                <span x-show="polygonPoints.length >= 3">Ready to close — click the button above.</span>
+                            </p>
                         </div>
 
-                        {{-- GPS Coordinate Inputs (visible, editable) --}}
-                        <div class="space-y-2 pt-2">
-                            <label
-                                class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">GPS
-                                Coordinates</label>
-                            <div class="flex gap-2">
-                                <div class="relative w-full">
-                                    <span
-                                        class="absolute left-2 top-1.5 text-[10px] text-slate-400 font-bold">LAT</span>
-                                    <input x-model="lat" @change="onManualCoordChange()"
-                                        class="w-full pl-8 pr-2 py-1.5 text-xs font-mono rounded border-slate-200 bg-white text-slate-700 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary dark:bg-slate-900 dark:border-slate-600 dark:text-slate-300 transition-shadow"
-                                        type="text" placeholder="—" />
-                                </div>
-                                <div class="relative w-full">
-                                    <span
-                                        class="absolute left-2 top-1.5 text-[10px] text-slate-400 font-bold">LNG</span>
-                                    <input x-model="lng" @change="onManualCoordChange()"
-                                        class="w-full pl-8 pr-2 py-1.5 text-xs font-mono rounded border-slate-200 bg-white text-slate-700 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary dark:bg-slate-900 dark:border-slate-600 dark:text-slate-300 transition-shadow"
-                                        type="text" placeholder="—" />
-                                </div>
-                            </div>
-                        </div>
-
-                        {{-- Info Footer --}}
+                        {{-- Info Footer (mode-aware) --}}
                         <div class="mt-auto pt-4 border-t border-slate-200 dark:border-slate-700">
                             <div class="flex gap-3 text-xs text-slate-500 dark:text-slate-400">
                                 <span class="material-symbols-outlined text-[16px]">info</span>
-                                <p>Drag the marker or click the map to set a location. Type coordinates to reposition
-                                    manually.</p>
+                                <p x-show="shape === 'circle'">Drag the marker or click the map to set a location.</p>
+                                <p x-show="shape === 'polygon'">Click the map to add corners. Close the shape when done. Switch to Circle to start over.</p>
                             </div>
                         </div>
                     </div>
@@ -265,10 +315,11 @@
                 {{-- ════════════════════════════════════════════════════════════ --}}
                 {{-- Hidden inputs — these are what the backend form receives     --}}
                 {{-- ════════════════════════════════════════════════════════════ --}}
-                <input type="hidden" name="latitude" :value="lat">
-                <input type="hidden" name="longitude" :value="lng">
-                <input type="hidden" name="geofence_radius" :value="radius">
-                <input type="hidden" name="geofence_shape" :value="shape">
+                <input type="hidden" name="latitude"         :value="lat">
+                <input type="hidden" name="longitude"        :value="lng">
+                <input type="hidden" name="geofence_radius"  :value="shape === 'circle' ? radius : ''">
+                <input type="hidden" name="geofence_shape"   :value="shape">
+                <input type="hidden" name="geofence_polygon" :value="polygonJson">
 
             </div>{{-- /geofenceMap Alpine component --}}
 
@@ -280,47 +331,66 @@
                     function geofenceMap() {
                         return {
                             // ── State ──────────────────────────────────────────────
-                            map: null, // Leaflet map instance
-                            marker: null, // Draggable marker
-                            overlay: null, // Active geofence shape layer
-                            lat: '', // Current latitude (string for input binding)
-                            lng: '', // Current longitude
-                            radius: 50, // Geofence radius in metres
-                            shape: 'circle', // 'circle' | 'square' | 'polygon'
-                            locating: false, // GPS loading state
-                            searchQuery: '', // Address search input
-                            statusMsg: '', // Error / info message shown to user
+                            map:            null,     // Leaflet map instance
+                            marker:         null,     // Draggable marker (circle mode)
+                            overlay:        null,     // Active circle overlay
+                            lat:            '',       // Centre latitude  (circle mode)
+                            lng:            '',       // Centre longitude (circle mode)
+                            radius:         50,       // Geofence radius in metres
+                            shape:          'circle', // 'circle' | 'polygon'
+                            locating:       false,    // GPS loading flag
+                            searchQuery:    '',       // Address search box value
+                            statusMsg:      '',       // Error / info banner text
+
+                            // ── Polygon draw state ─────────────────────────────────
+                            polygonPoints:  [],       // [[lat,lng], …] vertex list
+                            polygonMarkers: [],       // Leaflet vertex dot markers
+                            polygonLine:    null,     // L.polyline preview
+                            polygonClosed:  false,    // true once the polygon is finished
+                            polygonJson:    '',       // JSON payload for hidden input
 
                             // ── Lifecycle ──────────────────────────────────────────
                             init() {
-                                // Mount Leaflet — default view is a neutral world zoom
-                                // (no specific city pre-selected; GPS or search sets the real location)
                                 this.map = L.map('geofence-map', {
                                     center: [20, 0],
                                     zoom: 2,
                                     zoomControl: false,
                                 });
 
-                                // OpenStreetMap tiles (free, no API key required)
                                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                                     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors',
                                     maxZoom: 19,
                                 }).addTo(this.map);
 
-                                // Zoom control — bottom-right to avoid sidebar overlap
-                                L.control.zoom({
-                                    position: 'bottomright'
-                                }).addTo(this.map);
+                                L.control.zoom({ position: 'bottomright' }).addTo(this.map);
 
-                                // Click anywhere on the map to place / move the pin
+                                // Mode-aware click handler
                                 this.map.on('click', (e) => {
-                                    this.map.setView(e.latlng, Math.max(this.map.getZoom(), 15));
-                                    this.setPin(e.latlng.lat, e.latlng.lng);
+                                    if (this.shape === 'polygon') {
+                                        this.addPolygonVertex(e.latlng);
+                                    } else {
+                                        this.map.setView(e.latlng, Math.max(this.map.getZoom(), 15));
+                                        this.setPin(e.latlng.lat, e.latlng.lng);
+                                    }
                                 });
 
-                                // Auto-locate on load — silently pan to the user's area
-                                // If GPS is denied or unavailable the world view is kept as fallback
+                                // Auto-locate on load
                                 this.locateMe();
+                            },
+
+                            // ── Shape switching ────────────────────────────────────
+                            switchShape(newShape) {
+                                if (this.shape === newShape) return;
+
+                                // Tear down current mode's layers
+                                if (this.shape === 'circle') {
+                                    if (this.marker)  { this.marker.remove();  this.marker  = null; }
+                                    if (this.overlay) { this.overlay.remove(); this.overlay = null; }
+                                } else if (this.shape === 'polygon') {
+                                    this.clearPolygon();
+                                }
+
+                                this.shape = newShape;
                             },
 
                             // ── GPS: "Locate Me" button ────────────────────────────
@@ -329,21 +399,18 @@
                                     this.statusMsg = 'Geolocation is not supported by your browser.';
                                     return;
                                 }
-                                this.locating = true;
+                                this.locating  = true;
                                 this.statusMsg = '';
 
                                 navigator.geolocation.getCurrentPosition(
-                                    // Success callback
                                     (pos) => {
                                         this.locating = false;
-                                        const {
-                                            latitude,
-                                            longitude
-                                        } = pos.coords;
+                                        const { latitude, longitude } = pos.coords;
                                         this.map.setView([latitude, longitude], 17);
-                                        this.setPin(latitude, longitude);
+                                        if (this.shape === 'circle') {
+                                            this.setPin(latitude, longitude);
+                                        }
                                     },
-                                    // Error callback
                                     (err) => {
                                         this.locating = false;
                                         const msgs = {
@@ -352,10 +419,8 @@
                                             3: 'Location request timed out. Try again.',
                                         };
                                         this.statusMsg = msgs[err.code] || 'Could not retrieve location.';
-                                    }, {
-                                        timeout: 10000,
-                                        enableHighAccuracy: true
-                                    }
+                                    },
+                                    { timeout: 10000, enableHighAccuracy: true }
                                 );
                             },
 
@@ -366,50 +431,32 @@
                                 this.statusMsg = '';
 
                                 axios.get('https://nominatim.openstreetmap.org/search', {
-                                    params: {
-                                        q,
-                                        format: 'json',
-                                        limit: 1
-                                    },
-                                    headers: {
-                                        'Accept-Language': 'en'
-                                    },
+                                    params: { q, format: 'json', limit: 1 },
+                                    headers: { 'Accept-Language': 'en' },
                                 }).then((res) => {
                                     if (!res.data.length) {
                                         this.statusMsg = 'Address not found. Try a more specific search term.';
                                         return;
                                     }
-                                    const {
-                                        lat,
-                                        lon,
-                                        display_name
-                                    } = res.data[0];
+                                    const { lat, lon, display_name } = res.data[0];
                                     this.map.setView([lat, lon], 17);
-                                    this.setPin(parseFloat(lat), parseFloat(lon));
-                                    // Reflect the resolved display name back into the search bar
+                                    if (this.shape === 'circle') {
+                                        this.setPin(parseFloat(lat), parseFloat(lon));
+                                    }
                                     this.searchQuery = display_name;
                                 }).catch(() => {
                                     this.statusMsg = 'Geocoding request failed. Please check your connection.';
                                 });
                             },
 
-                            // ── Place / move pin + redraw overlay ─────────────────
+                            // ── Circle: place / move pin ───────────────────────────
                             setPin(lat, lng) {
                                 this.lat = parseFloat(lat).toFixed(6);
                                 this.lng = parseFloat(lng).toFixed(6);
 
-                                // Remove the old marker gracefully
-                                if (this.marker) {
-                                    this.marker.remove();
-                                    this.marker = null;
-                                }
+                                if (this.marker) { this.marker.remove(); this.marker = null; }
 
-                                // Drop a new draggable marker
-                                this.marker = L.marker([lat, lng], {
-                                    draggable: true
-                                }).addTo(this.map);
-
-                                // Sync LAT/LNG inputs + redraw overlay when marker is dragged
+                                this.marker = L.marker([lat, lng], { draggable: true }).addTo(this.map);
                                 this.marker.on('dragend', (e) => {
                                     const pos = e.target.getLatLng();
                                     this.lat = pos.lat.toFixed(6);
@@ -420,75 +467,122 @@
                                 this.updateOverlay();
                             },
 
-                            // ── Redraw the geofence overlay layer ─────────────────
+                            // ── Circle: redraw geofence overlay ───────────────────
                             updateOverlay() {
-                                if (!this.lat || !this.lng) return;
+                                if (this.shape !== 'circle' || !this.lat || !this.lng) return;
 
                                 const center = [parseFloat(this.lat), parseFloat(this.lng)];
-                                const r = parseInt(this.radius);
-
-                                // Shared style options
-                                const style = {
-                                    color: '#3b82f6',
-                                    fillColor: '#3b82f6',
-                                    fillOpacity: 0.15,
-                                    weight: 2,
-                                    dashArray: '6 4',
+                                const style  = {
+                                    color: '#3b82f6', fillColor: '#3b82f6',
+                                    fillOpacity: 0.15, weight: 2, dashArray: '6 4',
                                 };
 
-                                // Remove the previous overlay
-                                if (this.overlay) {
-                                    this.overlay.remove();
-                                    this.overlay = null;
-                                }
+                                if (this.overlay) { this.overlay.remove(); this.overlay = null; }
 
-                                if (this.shape === 'circle') {
-                                    // ── Circle ───────────────────────────────────
-                                    this.overlay = L.circle(center, {
-                                        radius: r,
-                                        ...style
-                                    }).addTo(this.map);
+                                this.overlay = L.circle(center, { radius: parseInt(this.radius), ...style })
+                                    .addTo(this.map);
 
-                                } else if (this.shape === 'square') {
-                                    // ── Square (axis-aligned rectangle) ──────────
-                                    // Convert radius in metres → degrees (approx)
-                                    const dLat = r / 111320;
-                                    const dLng = r / (111320 * Math.cos(center[0] * Math.PI / 180));
-                                    const bounds = [
-                                        [center[0] - dLat, center[1] - dLng],
-                                        [center[0] + dLat, center[1] + dLng],
-                                    ];
-                                    this.overlay = L.rectangle(bounds, style).addTo(this.map);
-
-                                } else if (this.shape === 'polygon') {
-                                    // ── Polygon (regular hexagon approximation) ───
-                                    const sides = 6;
-                                    const dLat = r / 111320;
-                                    const dLng = r / (111320 * Math.cos(center[0] * Math.PI / 180));
-                                    const points = [];
-                                    for (let i = 0; i < sides; i++) {
-                                        const angle = (Math.PI * 2 * i) / sides - Math.PI / 2;
-                                        points.push([
-                                            center[0] + dLat * Math.sin(angle),
-                                            center[1] + dLng * Math.cos(angle),
-                                        ]);
-                                    }
-                                    this.overlay = L.polygon(points, style).addTo(this.map);
-                                }
-
-                                // Keep the draggable marker in sync with the overlay centre
-                                if (this.marker) {
-                                    this.marker.setLatLng(center);
-                                }
+                                if (this.marker) { this.marker.setLatLng(center); }
                             },
 
-                            // ── Manual coordinate input change ────────────────────
+                            // ── Circle: manual coordinate input ───────────────────
                             onManualCoordChange() {
                                 const lat = parseFloat(this.lat);
                                 const lng = parseFloat(this.lng);
                                 if (isNaN(lat) || isNaN(lng)) return;
                                 this.map.setView([lat, lng], Math.max(this.map.getZoom(), 15));
                                 this.setPin(lat, lng);
+                            },
+
+                            // ── Polygon: add one vertex on map click ───────────────
+                            addPolygonVertex(latlng) {
+                                if (this.polygonClosed) return; // already finished
+
+                                const pt = [latlng.lat, latlng.lng];
+                                this.polygonPoints.push(pt);
+
+                                // Small circle marker at each vertex
+                                const vm = L.circleMarker(latlng, {
+                                    radius: 5, color: '#3b82f6',
+                                    fillColor: '#3b82f6', fillOpacity: 1, weight: 2,
+                                }).addTo(this.map);
+                                this.polygonMarkers.push(vm);
+
+                                // Re-draw the polyline preview
+                                this._redrawPolyline();
+                            },
+
+                            // ── Polygon: close and finalise ────────────────────────
+                            closePolygon() {
+                                if (this.polygonPoints.length < 3) return; // need ≥ 3 vertices
+                                if (this.polygonClosed) return;
+
+                                // Close the ring: last point = first point
+                                const ring = [...this.polygonPoints, this.polygonPoints[0]];
+
+                                // Remove preview line
+                                if (this.polygonLine) { this.polygonLine.remove(); this.polygonLine = null; }
+
+                                // Draw the filled polygon
+                                const style = {
+                                    color: '#3b82f6', fillColor: '#3b82f6',
+                                    fillOpacity: 0.15, weight: 2, dashArray: '6 4',
+                                };
+                                if (this.overlay) { this.overlay.remove(); }
+                                this.overlay = L.polygon(ring, style).addTo(this.map);
+
+                                // Compute centroid for lat/lng hidden inputs
+                                const avgLat = this.polygonPoints.reduce((s, p) => s + p[0], 0) / this.polygonPoints.length;
+                                const avgLng = this.polygonPoints.reduce((s, p) => s + p[1], 0) / this.polygonPoints.length;
+                                this.lat = avgLat.toFixed(6);
+                                this.lng = avgLng.toFixed(6);
+
+                                // Serialise for backend hidden input
+                                this.polygonJson = JSON.stringify(ring);
+
+                                this.polygonClosed = true;
+                            },
+
+                            // ── Polygon: undo last vertex ──────────────────────────
+                            undoLastVertex() {
+                                if (!this.polygonPoints.length || this.polygonClosed) return;
+
+                                this.polygonPoints.pop();
+
+                                const lastMarker = this.polygonMarkers.pop();
+                                if (lastMarker) lastMarker.remove();
+
+                                if (!this.polygonPoints.length) {
+                                    if (this.polygonLine) { this.polygonLine.remove(); this.polygonLine = null; }
+                                    return;
+                                }
+
+                                this._redrawPolyline();
+                            },
+
+                            // ── Polygon: clear everything and restart ──────────────
+                            clearPolygon() {
+                                this.polygonPoints  = [];
+                                this.polygonClosed  = false;
+                                this.polygonJson    = '';
+                                this.lat            = '';
+                                this.lng            = '';
+
+                                this.polygonMarkers.forEach(m => m.remove());
+                                this.polygonMarkers = [];
+
+                                if (this.polygonLine)  { this.polygonLine.remove();  this.polygonLine  = null; }
+                                if (this.overlay)      { this.overlay.remove();      this.overlay      = null; }
+                            },
+
+                            // ── Polygon: internal — redraw the preview polyline ────
+                            _redrawPolyline() {
+                                if (this.polygonLine) { this.polygonLine.remove(); this.polygonLine = null; }
+                                if (this.polygonPoints.length < 2) return;
+
+                                this.polygonLine = L.polyline(this.polygonPoints, {
+                                    color: '#3b82f6', weight: 2, dashArray: '4 4',
+                                }).addTo(this.map);
                             },
                         };
                     }
