@@ -1,151 +1,7 @@
-<!DOCTYPE html>
+<x-app-layout title="Review Official Room Details">
 
-<html class="light" lang="en">
+                <!-- Scrollable Content -->
 
-<head>
-    <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Review Official Room Details</title>
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com" rel="preconnect" />
-    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&amp;display=swap"
-        rel="stylesheet" />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
-        rel="stylesheet" />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
-        rel="stylesheet" />
-    <!-- Tailwind CSS -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <!-- Theme Configuration -->
-    <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "primary": "#2b6cee",
-                        "background-light": "#f6f6f8",
-                        "background-dark": "#101622",
-                        "surface-light": "#ffffff",
-                        "surface-dark": "#1e293b",
-                        "border-light": "#e2e8f0",
-                        "border-dark": "#334155",
-                    },
-                    fontFamily: {
-                        "display": ["Inter", "sans-serif"]
-                    },
-                    borderRadius: {
-                        "DEFAULT": "0.25rem",
-                        "lg": "0.5rem",
-                        "xl": "0.75rem",
-                        "full": "9999px"
-                    },
-                },
-            },
-        }
-    </script>
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
-
-        .sidebar-item-active {
-            background-color: rgba(43, 108, 238, 0.1);
-            color: #2b6cee;
-        }
-
-        .sidebar-item-active .material-symbols-outlined {
-            font-variation-settings: 'FILL' 1;
-        }
-    </style>
-</head>
-
-<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white antialiased overflow-hidden">
-    <div class="flex h-screen w-full overflow-hidden">
-        <!-- Side Navigation -->
-        <aside
-            class="hidden lg:flex w-64 flex-col border-r border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark h-full">
-            <div class="p-6 flex items-center gap-3 border-b border-border-light dark:border-border-dark h-16">
-                <div
-                    class="bg-center bg-no-repeat bg-cover rounded-lg size-8 bg-primary flex items-center justify-center text-white">
-                    <span class="material-symbols-outlined text-xl">admin_panel_settings</span>
-                </div>
-                <div class="flex flex-col">
-                    <h1 class="text-slate-900 dark:text-white text-sm font-bold leading-none">Room Manager</h1>
-                    <p class="text-slate-500 dark:text-slate-400 text-xs font-normal mt-1">Admin Console</p>
-                </div>
-            </div>
-            <div class="flex-1 overflow-y-auto py-4 px-3 flex flex-col gap-1">
-                <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group"
-                    href="#">
-                    <span class="material-symbols-outlined group-hover:text-primary transition-colors">dashboard</span>
-                    <span class="text-sm font-medium">Dashboard</span>
-                </a>
-                <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg sidebar-item-active text-primary transition-colors"
-                    href="#">
-                    <span class="material-symbols-outlined">meeting_room</span>
-                    <span class="text-sm font-medium">Rooms</span>
-                </a>
-                <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group"
-                    href="#">
-                    <span
-                        class="material-symbols-outlined group-hover:text-primary transition-colors">calendar_month</span>
-                    <span class="text-sm font-medium">Events</span>
-                </a>
-                <a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group"
-                    href="#">
-                    <span class="material-symbols-outlined group-hover:text-primary transition-colors">settings</span>
-                    <span class="text-sm font-medium">Settings</span>
-                </a>
-            </div>
-            <div class="p-4 border-t border-border-light dark:border-border-dark">
-                <div class="flex items-center gap-3">
-                    <div class="bg-center bg-no-repeat bg-cover rounded-full size-10 border border-border-light dark:border-border-dark"
-                        data-alt="User profile avatar showing a smiling person"
-                        style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCjL6zpOsTjl08h_Z-cln5RHI7dJkxdU5jB6NbOlaxJryteyT6Vvc7EW2o_bl25Us932abgvPpWOaktf5W04miLd9F3asgxdcdMb-Xpno8fRx5eVZa41pkM5uhkzTtLnl159gHPjYDl482qBysT6c7eRxrMshB4xi7dsds-lw7_f-mSY12rNO0zSmQ-QIaZP9DKPf3Tt3umRCHm8UdBVMO7rKMZgC8D6KUViGHOv83lBpW0oAmSACRT51sIuF2nbbTY07OJW0wNvxM");'>
-                    </div>
-                    <div class="flex flex-col">
-                        <p class="text-sm font-medium text-slate-900 dark:text-white">Alex Morgan</p>
-                        <p class="text-xs text-slate-500 dark:text-slate-400">Administrator</p>
-                    </div>
-                </div>
-            </div>
-        </aside>
-        <!-- Main Content Layout -->
-        <div class="flex flex-col flex-1 h-full overflow-hidden relative">
-            <!-- Top Header -->
-            <header
-                class="h-16 flex items-center justify-between px-6 md:px-10 border-b border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark shrink-0 z-20">
-                <div class="flex items-center gap-4">
-                    <button
-                        class="lg:hidden p-1 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300">
-                        <span class="material-symbols-outlined">menu</span>
-                    </button>
-                    <div class="flex items-center gap-2 text-slate-900 dark:text-white">
-                        <span class="material-symbols-outlined text-primary">add_business</span>
-                        <h2 class="text-lg font-bold leading-tight tracking-tight">Create Official Room</h2>
-                    </div>
-                </div>
-                <div class="flex items-center gap-4">
-                    <button
-                        class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 relative">
-                        <span class="material-symbols-outlined">notifications</span>
-                        <span
-                            class="absolute top-2 right-2 size-2 bg-red-500 rounded-full border-2 border-white dark:border-slate-900"></span>
-                    </button>
-                </div>
-            </header>
-            <!-- Scrollable Content -->
-            <main class="flex-1 overflow-y-auto bg-background-light dark:bg-background-dark scroll-smooth pb-24">
                 <div class="max-w-5xl mx-auto w-full p-6 md:p-10 flex flex-col gap-8">
                     <!-- Breadcrumbs -->
                     <div class="flex flex-wrap items-center gap-2 text-sm">
@@ -340,7 +196,7 @@
                         </div>
                     </div>
                 </div>
-            </main>
+          
             <!-- Sticky Footer Action Bar -->
             <div
                 class="sticky bottom-0 left-0 w-full bg-surface-light dark:bg-surface-dark border-t border-border-light dark:border-border-dark p-4 md:px-10 z-30 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
@@ -356,8 +212,5 @@
                     </button>
                 </div>
             </div>
-        </div>
-    </div>
-</body>
-
-</html>
+    
+</x-app-layout>

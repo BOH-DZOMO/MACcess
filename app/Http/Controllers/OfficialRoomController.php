@@ -37,7 +37,7 @@ class OfficialRoomController extends Controller
             'description' => 'required',
             'wifi_bssid' => 'required|string', // any device identifier
             'metadata' => 'sometimes|string',
-            'verification_type' => 'required|in:qrcode,fingerprint,device_check,otp',
+            'verification_type' => 'required|in:qrcode,fingerprint',
             'location' => 'required|string', // geofencing check for right datatype
             'device_uuid' => 'required', // unique identifier for user or device
             'data' => 'sometimes|array',

@@ -12,9 +12,9 @@ Route::get('/', function () {
 });
 
 
-Route::get('/testing', function () {
-    return view('testing');
-});
+// Route::get('/testing', function () {
+//     return view('testing');
+// });
 
 Route::get("/email",function(){
     Mail::to('bobsbf4@gmail.com')->queue(new EmailActivationOtp("boh dzomo","success"));
@@ -51,6 +51,7 @@ Route::prefix('rooms')->name('rooms.')->group(function () {
     Route::get('/official', [OfficialRoomController::class, "index"])->name('official.index');
     Route::get('/official/create', [OfficialRoomController::class, "create"])->name('official.create');
     Route::post('/official', [OfficialRoomController::class, "store"])->name('official.store');
+    // Route::get('/official/review', [OfficialRoomController::class, "review"])->name('official.review');
 
     // Adhoc
     Route::get('/adhoc', [AdhocRoomController::class, "index"])->name('adhoc.index');

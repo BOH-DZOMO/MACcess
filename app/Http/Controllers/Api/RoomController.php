@@ -74,7 +74,6 @@ class RoomController extends Controller
 
     public function store_unstructured(Request $request)
     {
-        // return response()->json(["data"=>$request->all()]);
         $data = $request->validate([
 
             'label_handle' => 'required|string',

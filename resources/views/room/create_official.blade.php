@@ -495,16 +495,202 @@
                 </script>
             @endonce
         </div>
+
+            <hr class="border-slate-100 dark:border-slate-700" />
+
+            {{-- ============================================================ --}}
+            {{-- TIMEFRAME WINDOW SECTION                                      --}}
+            {{-- Powered by: Alpine.js                                         --}}
+            {{-- ============================================================ --}}
+            <div class="flex flex-col gap-6 pt-2" x-data="timeframe()" x-init="init()">
+
+                {{-- Section Header --}}
+                <div>
+                    <h3 class="text-lg font-bold text-slate-900 dark:text-white">Time Frame Window</h3>
+                    <p class="text-sm text-slate-500 dark:text-slate-400">Define when attendance is valid for this room.</p>
+                </div>
+
+                {{-- 1 + 2. Timeframe Name & Time Range — single row --}}
+                <div class="flex flex-col gap-2">
+                    <div class="flex flex-col md:flex-row md:items-center gap-3">
+
+                        {{-- Timeframe Name --}}
+                        <div class="flex items-center gap-3 md:flex-1">
+                            <label class="text-sm font-medium text-slate-700 dark:text-slate-300 whitespace-nowrap shrink-0" for="shiftLabel">
+                                Timeframe Name
+                            </label>
+                            <input
+                                x-model="shiftLabel"
+                                class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:placeholder-slate-500 transition-shadow"
+                                id="shiftLabel"
+                                placeholder="e.g., Weekday Morning Shift"
+                                type="text"
+                                name="timeframe_label"
+                            />
+                        </div>
+
+                        {{-- Visual divider --}}
+                        <div class="hidden md:block w-px self-stretch bg-slate-200 dark:bg-slate-700 shrink-0"></div>
+
+                        {{-- Time Range --}}
+                        <div class="flex items-center gap-3 md:flex-1">
+                            <label class="text-sm font-medium text-slate-700 dark:text-slate-300 whitespace-nowrap shrink-0">
+                                Time Range
+                            </label>
+                            <div class="flex items-center gap-2 flex-1">
+
+                                {{-- Start Time --}}
+                                <input
+                                    x-model="startTime"
+                                    @change="validateTime()"
+                                    class="flex-1 min-w-0 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-lg font-mono font-bold text-slate-800 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary focus:bg-white dark:border-slate-600 dark:bg-slate-800/70 dark:text-white transition-all shadow-sm"
+                                    type="time"
+                                    name="timeframe_start"
+                                />
+
+                                {{-- Separator --}}
+                                <span class="text-slate-400 font-bold text-base select-none shrink-0">—</span>
+
+                                {{-- End Time --}}
+                                <input
+                                    x-model="endTime"
+                                    @change="validateTime()"
+                                    class="flex-1 min-w-0 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-lg font-mono font-bold text-slate-800 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary focus:bg-white dark:border-slate-600 dark:bg-slate-800/70 dark:text-white transition-all shadow-sm"
+                                    type="time"
+                                    name="timeframe_end"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Time Validation Error --}}
+                    <p x-show="timeError" x-text="timeError" x-transition class="text-xs text-red-500 flex items-center gap-1 md:justify-end">
+                        <span class="material-symbols-outlined text-[14px]">error</span>
+                    </p>
+                </div>
+
+                {{-- 3. Frequency --}}
+                <div class="space-y-4">
+                    <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Repeat</label>
+
+                    {{-- A. Segmented Control --}}
+                    <div class="inline-flex rounded-lg border border-slate-200 dark:border-slate-600 bg-slate-100 dark:bg-slate-800 p-1 gap-1">
+                        <template x-for="opt in presetOptions" :key="opt.value">
+                            <button
+                                type="button"
+                                @click="setPreset(opt.value)"
+                                :class="preset === opt.value
+                                    ? 'bg-primary text-white shadow-sm shadow-primary/30'
+                                    : 'text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700'"
+                                class="px-4 py-1.5 rounded-md text-sm font-semibold transition-all"
+                                x-text="opt.label">
+                            </button>
+                        </template>
+                    </div>
+
+                    {{-- B. Day Picker --}}
+                    <div class="flex gap-2 flex-wrap">
+                        <template x-for="(day, index) in days" :key="index">
+                            <button
+                                type="button"
+                                @click="toggleDay(index)"
+                                :disabled="preset !== 'custom'"
+                                :class="selectedDays.includes(index)
+                                    ? 'bg-primary text-white border-primary shadow-sm shadow-primary/20'
+                                    : preset !== 'custom'
+                                        ? 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-600 text-slate-400 dark:text-slate-500 cursor-not-allowed'
+                                        : 'bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:bg-primary/10 hover:border-primary/40 cursor-pointer'"
+                                class="px-3 h-9 rounded-full border-2 flex items-center justify-center text-xs font-bold transition-all select-none"
+                                x-text="day">
+                            </button>
+                        </template>
+                    </div>
+                    <p class="text-xs text-slate-400 dark:text-slate-500" x-show="preset !== 'custom'">Switch to <span class="font-semibold text-slate-500 dark:text-slate-400">Custom</span> to manually select days.</p>
+                </div>
+
+                {{-- Hidden inputs for backend --}}
+                <input type="hidden" name="timeframe_days" :value="JSON.stringify(selectedDays)">
+
+            </div>{{-- /timeframe Alpine component --}}
+
+            {{-- ============================================================ --}}
+            {{-- timeframe() — Alpine.js component definition                   --}}
+            {{-- ============================================================ --}}
+            @once
+                <script>
+                    function timeframe() {
+                        return {
+                            // ── State ──────────────────────────────────────────────
+                            shiftLabel:   '',
+                            startTime:    '',
+                            endTime:      '',
+                            preset:       'weekday',      // 'weekday' | 'weekend' | 'custom'
+                            selectedDays: [0,1,2,3,4],   // Mon=0 … Sun=6
+                            timeError:    '',
+
+                            presetOptions: [
+                                { value: 'weekday', label: 'Mon – Fri' },
+                                { value: 'weekend', label: 'Sat – Sun' },
+                                { value: 'custom',  label: 'Custom'    },
+                            ],
+                            days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+
+                            // ── Lifecycle ──────────────────────────────────────────
+                            init() {
+                                // Pre-select Mon–Fri on load
+                                this.setPreset('weekday');
+                            },
+
+                            // ── Set Preset ─────────────────────────────────────────
+                            setPreset(value) {
+                                this.preset = value;
+                                if (value === 'weekday') {
+                                    this.selectedDays = [0, 1, 2, 3, 4];
+                                } else if (value === 'weekend') {
+                                    this.selectedDays = [5, 6];
+                                } else if (value === 'custom') {
+                                    this.selectedDays = [];  // clear — user picks manually
+                                }
+                            },
+
+                            // ── Toggle individual day (custom mode only) ───────────
+                            toggleDay(index) {
+                                if (this.preset !== 'custom') return;
+                                const pos = this.selectedDays.indexOf(index);
+                                if (pos > -1) {
+                                    this.selectedDays.splice(pos, 1);
+                                } else {
+                                    this.selectedDays.push(index);
+                                }
+                            },
+
+                            // ── Validate time range ────────────────────────────────
+                            validateTime() {
+                                if (!this.startTime || !this.endTime) {
+                                    this.timeError = '';
+                                    return;
+                                }
+                                this.timeError = this.startTime >= this.endTime
+                                    ? 'End time must be after start time.'
+                                    : '';
+                            },
+                        };
+                    }
+                </script>
+            @endonce
+
+        </div>
         <div class="mt-8 flex justify-end gap-4">
             <button
                 class="px-6 py-2.5 rounded-lg text-sm font-bold text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white">
                 Cancel
             </button>
-            <button
+            {{-- <a href="{{ route('room.review_official') }}" --}}
+            <a href=""
                 class="flex items-center gap-2 px-6 py-2.5 rounded-lg bg-primary text-white text-sm font-bold shadow-lg shadow-primary/30 hover:bg-blue-600 transition-all active:scale-95">
-                Next: Configuration
+                Next: Review
                 <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
-            </button>
+            </a>
         </div>
     </div>
 
