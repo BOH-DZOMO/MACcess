@@ -20,11 +20,50 @@ class OfficialRoomController extends Controller
     }
 
     /**
+     * Show the review page with session draft data.
+     */
+    public function review()
+    {
+        $draft = session('official_room_draft', []);
+        return view('room.official_review', compact('draft'));
+    }
+
+    /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
         return view('room.create_official');
+    }
+
+    /**
+     * Save form data to session and redirect to the review step.
+     */
+    public function storeSession(Request $request)
+    {
+        $data = $request->validate([
+            'name'                => 'required|string|max:255',
+            'description'         => 'nullable|string',
+            'wifi_bssid'          => 'nullable|string',
+            'verification_type'   => 'nullable|array',
+            'verification_type.*' => 'in:fingerprint,qr',
+            // Geofence — stored as-is, backend validation deferred
+            'latitude'            => 'nullable|numeric',
+            'longitude'           => 'nullable|numeric',
+            'geofence_radius'     => 'nullable|numeric',
+            'geofence_shape'      => 'nullable|in:circle,polygon',
+            'geofence_polygon'    => 'nullable|string',
+            // Timeframe
+            'timeframe_label'     => 'nullable|string|max:255',
+            'timeframe_start'     => 'nullable|date_format:H:i',
+            'timeframe_end'       => 'nullable|date_format:H:i',
+            'timeframe_days'      => 'nullable|string',
+        ]);
+
+        // Flash all validated data to session so the review page can read it
+        session()->put('official_room_draft', $data);
+
+        return redirect()->route('rooms.official.create.review');
     }
 
     /**

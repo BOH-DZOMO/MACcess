@@ -50,8 +50,9 @@ Route::prefix('rooms')->name('rooms.')->group(function () {
     // Official
     Route::get('/official', [OfficialRoomController::class, "index"])->name('official.index');
     Route::get('/official/create', [OfficialRoomController::class, "create"])->name('official.create');
+    Route::post('/official/session', [OfficialRoomController::class, "storeSession"])->name('official.store-session');
     Route::post('/official', [OfficialRoomController::class, "store"])->name('official.store');
-    // Route::get('/official/review', [OfficialRoomController::class, "review"])->name('official.review');
+    Route::get('/official/create/review', [OfficialRoomController::class, "review"])->name('official.create.review');
 
     // Adhoc
     Route::get('/adhoc', [AdhocRoomController::class, "index"])->name('adhoc.index');

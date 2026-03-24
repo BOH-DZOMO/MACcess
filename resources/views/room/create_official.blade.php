@@ -31,10 +31,12 @@
                 </div>
             </div>
         </div>
+        <form action="{{ route('rooms.official.store-session') }}" method="POST" id="create-official-form">
+        @csrf
         <div
             class="flex flex-col gap-8 rounded-xl bg-white p-6 shadow-sm border border-slate-200 dark:bg-[#1e2736] dark:border-slate-700 dark:shadow-none">
             <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-                <div class="col-span-1 md:col-span-2">
+                <div class="col-span-1 md:col-span-2" id="section-details">
                     <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4">Room Details</h3>
                 </div>
                 <div class="col-span-1 md:col-span-2 space-y-2">
@@ -42,19 +44,20 @@
                             class="text-red-500">*</span></label>
                     <input
                         class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:placeholder-slate-500 transition-shadow"
-                        id="roomName" placeholder="e.g. Main Conference Hall A" type="text" />
+                        id="roomName" name="name" placeholder="e.g. Main Conference Hall A" type="text"
+                        value="{{ old('name', session('official_room_draft.name', '')) }}" />
                 </div>
                 <div class="col-span-1 md:col-span-2 space-y-2">
                     <label class="text-sm font-medium text-slate-700 dark:text-slate-300"
                         for="description">Description</label>
                     <textarea
                         class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:placeholder-slate-500 resize-none transition-shadow"
-                        id="description" placeholder="Briefly describe the purpose of this attendance room..." rows="3"></textarea>
+                        id="description" name="description" placeholder="Briefly describe the purpose of this attendance room..." rows="3">{{ old('description', session('official_room_draft.description', '')) }}</textarea>
                 </div>
             </div>
             <hr class="border-slate-100 dark:border-slate-700" />
             <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-                <div class="col-span-1 md:col-span-2">
+                <div class="col-span-1 md:col-span-2" id="section-security">
                     <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4">Security &amp;
                         Verification</h3>
                 </div>
@@ -68,7 +71,8 @@
                     <div class="relative">
                         <input
                             class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 pl-10 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:placeholder-slate-500 transition-shadow"
-                            id="wifiBSSID" placeholder="xx:xx:xx:xx:xx:xx" type="text" />
+                            id="wifiBSSID" name="wifi_bssid" placeholder="xx:xx:xx:xx:xx:xx" type="text"
+                            value="{{ old('wifi_bssid', session('official_room_draft.wifi_bssid', '')) }}" />
                         <span
                             class="material-symbols-outlined absolute left-3 top-2.5 text-slate-400 text-[20px]">wifi</span>
                     </div>
@@ -100,7 +104,7 @@
                                 Additional Verification(select one or more)</p>
                             <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-2">
                                 <label class="relative cursor-pointer group">
-                                    <input class="peer sr-only" name="verification_type[]" type="checkbox" value="fingerprint" />
+                                    <input class="peer sr-only" name="verification_type[]" type="checkbox" value="fingerprint" {{ in_array('fingerprint', old('verification_type', session('official_room_draft.verification_type', []))) ? 'checked' : '' }} />
                                     <div class="flex flex-col h-full rounded-xl border-2 border-slate-200 bg-white p-5 transition-all hover:bg-slate-50 peer-checked:border-primary peer-checked:bg-primary/5 peer-checked:text-primary dark:border-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:peer-checked:bg-primary/10">
                                         <div class="flex justify-between items-start mb-4">
                                             <span class="material-symbols-outlined text-[32px] text-slate-400 dark:text-slate-500 peer-checked:text-primary transition-colors">fingerprint</span>
@@ -112,7 +116,7 @@
                                 </label>
 
                                 <label class="relative cursor-pointer group">
-                                    <input class="peer sr-only" name="verification_type[]" type="checkbox" value="qr" />
+                                    <input class="peer sr-only" name="verification_type[]" type="checkbox" value="qr" {{ in_array('qr', old('verification_type', session('official_room_draft.verification_type', []))) ? 'checked' : '' }} />
                                     <div class="flex flex-col h-full rounded-xl border-2 border-slate-200 bg-white p-5 transition-all hover:bg-slate-50 peer-checked:border-primary peer-checked:bg-primary/5 peer-checked:text-primary dark:border-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:peer-checked:bg-primary/10">
                                         <div class="flex justify-between items-start mb-4">
                                             <span class="material-symbols-outlined text-[32px] text-slate-400 dark:text-slate-500 peer-checked:text-primary transition-colors">qr_code_scanner</span>
@@ -139,7 +143,7 @@
                 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
             @endonce
 
-            <div class="flex flex-col gap-6" x-data="geofenceMap()" x-init="init()">
+            <div class="flex flex-col gap-6" x-data="geofenceMap('{{ old('latitude', session('official_room_draft.latitude', '')) }}', '{{ old('longitude', session('official_room_draft.longitude', '')) }}', '{{ old('geofence_radius', session('official_room_draft.geofence_radius', 50)) }}', '{{ old('geofence_shape', session('official_room_draft.geofence_shape', 'circle')) }}', '{{ old('geofence_polygon', session('official_room_draft.geofence_polygon', '')) }}')" x-init="init()" id="section-location">
 
                 {{-- Section Header --}}
                 <div>
@@ -328,16 +332,16 @@
             {{-- ============================================================ --}}
             @once
                 <script>
-                    function geofenceMap() {
+                    function geofenceMap(initLat, initLng, initRadius, initShape, initPolygon) {
                         return {
                             // ── State ──────────────────────────────────────────────
                             map:            null,     // Leaflet map instance
                             marker:         null,     // Draggable marker (circle mode)
                             overlay:        null,     // Active circle overlay
-                            lat:            '',       // Centre latitude  (circle mode)
-                            lng:            '',       // Centre longitude (circle mode)
-                            radius:         50,       // Geofence radius in metres
-                            shape:          'circle', // 'circle' | 'polygon'
+                            lat:            initLat,       // Centre latitude  (circle mode)
+                            lng:            initLng,       // Centre longitude (circle mode)
+                            radius:         parseInt(initRadius) || 50,       // Geofence radius in metres
+                            shape:          initShape, // 'circle' | 'polygon'
                             locating:       false,    // GPS loading flag
                             searchQuery:    '',       // Address search box value
                             statusMsg:      '',       // Error / info banner text
@@ -347,7 +351,7 @@
                             polygonMarkers: [],       // Leaflet vertex dot markers
                             polygonLine:    null,     // L.polyline preview
                             polygonClosed:  false,    // true once the polygon is finished
-                            polygonJson:    '',       // JSON payload for hidden input
+                            polygonJson:    initPolygon,       // JSON payload for hidden input
 
                             // ── Lifecycle ──────────────────────────────────────────
                             init() {
@@ -374,8 +378,28 @@
                                     }
                                 });
 
-                                // Auto-locate on load
-                                this.locateMe();
+                                // Check if we should render existing coordinates or auto-locate
+                                if (this.lat && this.lng) {
+                                    this.map.setView([parseFloat(this.lat), parseFloat(this.lng)], 17);
+                                    if (this.shape === 'circle') {
+                                        this.setPin(this.lat, this.lng);
+                                    } else if (this.shape === 'polygon' && this.polygonJson) {
+                                        try {
+                                            const ring = JSON.parse(this.polygonJson);
+                                            // Re-draw polygon overlay directly
+                                            const style = { color: '#3b82f6', fillColor: '#3b82f6', fillOpacity: 0.15, weight: 2, dashArray: '6 4' };
+                                            this.overlay = L.polygon(ring, style).addTo(this.map);
+                                            // Make shape close immediately
+                                            this.polygonPoints = ring.slice(0, -1);
+                                            this.polygonClosed = true;
+                                        } catch (e) {
+                                            console.error("Failed to parse polygon JSON:", e);
+                                        }
+                                    }
+                                } else {
+                                    // Auto-locate only on fresh session
+                                    this.locateMe();
+                                }
                             },
 
                             // ── Shape switching ────────────────────────────────────
@@ -596,7 +620,7 @@
             {{-- TIMEFRAME WINDOW SECTION                                      --}}
             {{-- Powered by: Alpine.js                                         --}}
             {{-- ============================================================ --}}
-            <div class="flex flex-col gap-6 pt-2" x-data="timeframe()" x-init="init()">
+            <div class="flex flex-col gap-6 pt-2" x-data="timeframe('{{ old('timeframe_label', session('official_room_draft.timeframe_label', '')) }}', '{{ old('timeframe_start', session('official_room_draft.timeframe_start', '')) }}', '{{ old('timeframe_end', session('official_room_draft.timeframe_end', '')) }}', '{{ old('timeframe_days', session('official_room_draft.timeframe_days', '')) }}')" x-init="init()" id="section-timeframe">
 
                 {{-- Section Header --}}
                 <div>
@@ -712,12 +736,12 @@
             {{-- ============================================================ --}}
             @once
                 <script>
-                    function timeframe() {
+                    function timeframe(initLabel, initStart, initEnd, initDaysStr) {
                         return {
                             // ── State ──────────────────────────────────────────────
-                            shiftLabel:   '',
-                            startTime:    '',
-                            endTime:      '',
+                            shiftLabel:   initLabel,
+                            startTime:    initStart,
+                            endTime:      initEnd,
                             preset:       'weekday',      // 'weekday' | 'weekend' | 'custom'
                             selectedDays: [0,1,2,3,4],   // Mon=0 … Sun=6
                             timeError:    '',
@@ -731,7 +755,27 @@
 
                             // ── Lifecycle ──────────────────────────────────────────
                             init() {
-                                // Pre-select Mon–Fri on load
+                                // Hydrate selected days if provided
+                                if (initDaysStr) {
+                                    try {
+                                        const parsed = JSON.parse(initDaysStr);
+                                        if (Array.isArray(parsed) && parsed.length > 0) {
+                                            this.selectedDays = parsed;
+                                            
+                                            // Try to map back to preset if it matches exactly
+                                            const isWeekday = JSON.stringify([...parsed].sort()) === JSON.stringify([0,1,2,3,4]);
+                                            const isWeekend = JSON.stringify([...parsed].sort()) === JSON.stringify([5,6]);
+                                            
+                                            if (isWeekday) this.preset = 'weekday';
+                                            else if (isWeekend) this.preset = 'weekend';
+                                            else this.preset = 'custom';
+                                            
+                                            return; // successfully re-hydrated
+                                        }
+                                    } catch(e) {}
+                                }
+                                
+                                // Pre-select Mon–Fri on load as fallback
                                 this.setPreset('weekday');
                             },
 
@@ -774,18 +818,67 @@
             @endonce
 
         </div>
+        </div>{{-- /card --}}
         <div class="mt-8 flex justify-end gap-4">
-            <button
+            <a href="{{ route('rooms.official.index') }}"
                 class="px-6 py-2.5 rounded-lg text-sm font-bold text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white">
                 Cancel
-            </button>
-            {{-- <a href="{{ route('room.review_official') }}" --}}
-            <a href=""
+            </a>
+            <button type="submit" form="create-official-form"
                 class="flex items-center gap-2 px-6 py-2.5 rounded-lg bg-primary text-white text-sm font-bold shadow-lg shadow-primary/30 hover:bg-blue-600 transition-all active:scale-95">
                 Next: Review
                 <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
-            </a>
+            </button>
         </div>
+        </form>{{-- /create-official-form --}}
     </div>
+
+    {{-- ============================================================ --}}
+    {{-- localStorage draft: saves inputs on every keystroke and      --}}
+    {{-- restores them on page load when old() values are absent.     --}}
+    {{-- The draft is cleared on successful form submission.          --}}
+    {{-- ============================================================ --}}
+    <script>
+        (function () {
+            const DRAFT_KEY = 'official_room_draft';
+
+            // Fields to persist: [inputId, storageField]
+            const TEXT_FIELDS = [
+                ['roomName',    'name'],
+                ['description', 'description'],
+                ['wifiBSSID',   'wifi_bssid'],
+                // Optional front-end tracking
+            ];
+
+            // ── Save on every input event ────────────────────────────────
+            TEXT_FIELDS.forEach(([id, field]) => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                el.addEventListener('input', () => {
+                    const draft = JSON.parse(localStorage.getItem(DRAFT_KEY) || '{}');
+                    draft[field] = el.value;
+                    localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+                });
+            });
+
+            // ── Restore on page load (only when server old() is empty) ───
+            document.addEventListener('DOMContentLoaded', () => {
+                const draft = JSON.parse(localStorage.getItem(DRAFT_KEY) || '{}');
+                TEXT_FIELDS.forEach(([id, field]) => {
+                    const el = document.getElementById(id);
+                    if (!el || el.value.trim() !== '') return; // server old() already filled it
+                    if (draft[field]) el.value = draft[field];
+                });
+            });
+
+            // ── Clear draft on successful submit ─────────────────────────
+            const form = document.getElementById('create-official-form');
+            if (form) {
+                form.addEventListener('submit', () => {
+                    localStorage.removeItem(DRAFT_KEY);
+                });
+            }
+        })();
+    </script>
 
 </x-app-layout>
