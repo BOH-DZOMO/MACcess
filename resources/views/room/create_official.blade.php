@@ -72,6 +72,7 @@
                         <input
                             class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 pl-10 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:placeholder-slate-500 transition-shadow"
                             id="wifiBSSID" name="wifi_bssid" placeholder="xx:xx:xx:xx:xx:xx" type="text"
+                            required
                             value="{{ old('wifi_bssid', session('official_room_draft.wifi_bssid', '')) }}" />
                         <span
                             class="material-symbols-outlined absolute left-3 top-2.5 text-slate-400 text-[20px]">wifi</span>
@@ -116,7 +117,7 @@
                                 </label>
 
                                 <label class="relative cursor-pointer group">
-                                    <input class="peer sr-only" name="verification_type[]" type="checkbox" value="qr" {{ in_array('qr', old('verification_type', session('official_room_draft.verification_type', []))) ? 'checked' : '' }} />
+                                    <input class="peer sr-only" name="verification_type[]" type="checkbox" value="qrcode" {{ in_array('qrcode', old('verification_type', session('official_room_draft.verification_type', []))) ? 'checked' : '' }} />
                                     <div class="flex flex-col h-full rounded-xl border-2 border-slate-200 bg-white p-5 transition-all hover:bg-slate-50 peer-checked:border-primary peer-checked:bg-primary/5 peer-checked:text-primary dark:border-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:peer-checked:bg-primary/10">
                                         <div class="flex justify-between items-start mb-4">
                                             <span class="material-symbols-outlined text-[32px] text-slate-400 dark:text-slate-500 peer-checked:text-primary transition-colors">qr_code_scanner</span>

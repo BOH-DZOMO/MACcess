@@ -44,9 +44,9 @@ class OfficialRoomController extends Controller
         $data = $request->validate([
             'name'                => 'required|string|max:255',
             'description'         => 'nullable|string',
-            'wifi_bssid'          => 'nullable|string',
+            'wifi_bssid'          => 'required|string',
             'verification_type'   => 'nullable|array',
-            'verification_type.*' => 'in:fingerprint,qr',
+            'verification_type.*' => 'in:fingerprint,qrcode',
             // Geofence — stored as-is, backend validation deferred
             'latitude'            => 'nullable|numeric',
             'longitude'           => 'nullable|numeric',
@@ -73,13 +73,19 @@ class OfficialRoomController extends Controller
     {
         $data = $request->validate([
             'name' => 'required|string',
-            'description' => 'required',
-            'wifi_bssid' => 'required|string', // any device identifier
-            'metadata' => 'sometimes|string',
-            'verification_type' => 'required|in:qrcode,fingerprint',
-            'location' => 'required|string', // geofencing check for right datatype
-            'device_uuid' => 'required', // unique identifier for user or device
-            'data' => 'sometimes|array',
+            'description' => 'nullable',
+            'wifi_bssid' => 'required|string', 
+            'verification_type' => 'required|array', 
+            'verification_type.*' => 'in:fingerprint,qrcode',
+            'geofence_shape' => 'required|in:circle,polygon',
+            'latitude' => 'required_if:geofence_shape,circle|nullable|numeric',
+            'longitude' => 'required_if:geofence_shape,circle|nullable|numeric',
+            'geofence_radius' => 'required_if:geofence_shape,circle|nullable|numeric',
+            'geofence_polygon' => 'required_if:geofence_shape,polygon|nullable|string',
+            'timeframe_label'     => 'required|string|max:255',
+            'timeframe_start'     => 'required|date_format:H:i',
+            'timeframe_end'       => 'required|date_format:H:i',
+            'timeframe_days'      => 'required|string',
         ]);
 
         $user = $request->user();
