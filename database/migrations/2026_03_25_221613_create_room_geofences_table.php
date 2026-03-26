@@ -9,11 +9,12 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
+    public $withinTransaction = false;
     public function up(): void
     {
         Schema::create('room_geofences', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('room_id')->constrained()->onDelete('cascade');
+            $table->foreignId('room_id')->constrained('rooms')->onDelete('cascade');
             $table->enum('shape_type', ['circle', 'polygon']);
             $table->geography('boundary')->nullable(); // Stores Point for circle or Polygon
             $table->decimal('radius', 10, 2)->nullable();

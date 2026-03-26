@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Room;
+use App\Models\RoomGeofence;
 use Illuminate\Http\Request;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Arr;
@@ -89,48 +90,76 @@ class OfficialRoomController extends Controller
         ]);
 
         $user = $request->user();
-        if ($user->is_active && $user->device->is_active && $user->device->device_uuid === $data['device_uuid']) {
 
-            $room_data = [
-                'room_type' => "unstructured",
-                'name' => $data['name'],
-                'description' => $data['description'],
-                'metadata' => $data['metadata'] ?? null,
-                'location' => $data['location'],
-                'wifi_bssid' => $data['wifi_bssid'],
-                'created_by' => $user->id,
-                'verification_type' => $data['verification_type'],
-                'room_uuid' => Str::uuid()->toString(),
-            ];
+        // 1. Create Room
+        $room = Room::create([
+            'room_uuid' => Str::uuid()->toString(),
+            'name' => $data['name'],
+            'description' => $data['description'] ?? null,
+            'room_type' => "structured",
+            'wifi_bssid' => $data['wifi_bssid'],
+            'verification_type' => json_encode($data['verification_type']),
+            'location' => $data['geofence_shape'] === 'circle' 
+                ? "{$data['latitude']},{$data['longitude']}" 
+                : "polygon",
+            'created_by' => $user->id,
+        ]);
 
-            try {
-                if ($room = Room::create($room_data)) {
-                    if (isset($data['data'])) {
-                        $window_data = array_map(function ($array) use ($room) {
-                            return [
-                                'name' => $array['name'],
-                                'room_id' => $room->id,
-                                'day' => $array['day'],
-                                'start_time' => $array['start_time'],
-                                'end_time' => $array['end_time'],
-                            ];
-                        }, $data['data']);
-                        DB::table('time_windows')->insert($window_data);
-                    }
-
-                    return response()->json([
-                        "success" => true,
-                        'message' => 'Official Room created with success with time window']
-                    , 201);
-                } else {
-                    return response()->json(['message' => 'account or device not verified', "success" => false], 404);
-                }
-            } catch (QueryException $e) {
-                return response()->json(["success" => false, 'error' => [$e->getMessage() . ' error occured when creating room']], 404);
-            }
-        } else {
-            return response()->json(['message' => 'Invalid request or user']);
+        if (!$room) {
+            return redirect()->back()->withInput()->with('error', 'Failed to create room');
         }
+
+        // 2. Create Geofence (PostGIS)
+        try {
+            $boundary = null;
+            if ($data['geofence_shape'] === 'circle') {
+                $boundary = DB::raw("ST_GeographyFromText('POINT({$data['longitude']} {$data['latitude']})')");
+            } else {
+                $points = json_decode($data['geofence_polygon'], true);
+                if (is_array($points)) {
+                    $coordString = implode(', ', array_map(fn($p) => "{$p[1]} {$p[0]}", $points));
+                    $boundary = DB::raw("ST_GeographyFromText('POLYGON(({$coordString}))')");
+                }
+            }
+
+            RoomGeofence::create([
+                'room_id' => $room->id,
+                'shape_type' => $data['geofence_shape'],
+                'boundary' => $boundary,
+                'radius' => $data['geofence_radius'] ?? null,
+                'is_active' => true,
+            ]);
+        } catch (\Exception $e) {
+            logger()->error('Geofence creation failed: ' . $e->getMessage());
+        }
+
+        // 3. Create Time Windows
+        try {
+            $days = json_decode($data['timeframe_days'], true);
+            if (is_array($days)) {
+                $dayMapping = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+                $timeWindows = [];
+                foreach ($days as $dayIndex) {
+                    $timeWindows[] = [
+                        'name' => $data['timeframe_label'],
+                        'room_id' => $room->id,
+                        'day' => $dayMapping[$dayIndex] ?? $dayIndex,
+                        'start_time' => $data['timeframe_start'],
+                        'end_time' => $data['timeframe_end'],
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                }
+                
+                if (!empty($timeWindows)) {
+                    DB::table('time_windows')->insert($timeWindows);
+                }
+            }
+        } catch (\Exception $e) {
+            logger()->error('Time window creation failed: ' . $e->getMessage());
+        }
+
+        return redirect()->route('rooms.official.index')->with('success', 'Official Room created successfully');
     }
 
     /**
