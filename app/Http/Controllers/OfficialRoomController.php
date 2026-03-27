@@ -167,7 +167,7 @@ class OfficialRoomController extends Controller
      */
     public function show(Room $room)
     {
-        //
+        return view('room.official_detail', compact('room'));
     }
 
     /**

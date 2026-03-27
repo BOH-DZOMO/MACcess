@@ -57,7 +57,9 @@ Route::prefix('rooms')->name('rooms.')->group(function () {
     // Adhoc
     Route::get('/adhoc', [AdhocRoomController::class, "index"])->name('adhoc.index');
     Route::get('/adhoc/create', [AdhocRoomController::class, "create"])->name('adhoc.create');
+    Route::post('/adhoc/session', [AdhocRoomController::class, "storeSession"])->name('adhoc.store-session');
     Route::post('/adhoc', [AdhocRoomController::class, "store"])->name('adhoc.store');
+    Route::get('/adhoc/create/review', [AdhocRoomController::class, "review"])->name('adhoc.create.review');
     
 });
 
