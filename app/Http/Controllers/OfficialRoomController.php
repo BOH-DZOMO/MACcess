@@ -17,7 +17,12 @@ class OfficialRoomController extends Controller
      */
     public function index()
     {
-        return view('room.official');
+        $rooms = Room::where('room_type', 'structured')
+            ->where('delete_status', 0)
+            ->latest()
+            ->paginate(10);
+
+        return view('room.official', compact('rooms'));
     }
 
     /**
