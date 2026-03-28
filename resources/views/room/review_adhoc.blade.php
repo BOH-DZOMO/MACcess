@@ -249,6 +249,31 @@
             </a>
             <form method="POST" action="{{ route('rooms.adhoc.store') }}">
                 @csrf
+                {{-- Hidden Inputs to "Properly Send Data" --}}
+                <input type="hidden" name="name"                value="{{ $draft['name'] ?? '' }}">
+                <input type="hidden" name="description"         value="{{ $draft['description'] ?? '' }}">
+                <input type="hidden" name="wifi_bssid"          value="{{ $draft['wifi_bssid'] ?? '' }}">
+                <input type="hidden" name="activation_date"     value="{{ $draft['activation_date'] ?? '' }}">
+                <input type="hidden" name="activation_time"     value="{{ $draft['activation_time'] ?? '' }}">
+                <input type="hidden" name="activation_duration" value="{{ $draft['activation_duration'] ?? '' }}">
+                <input type="hidden" name="latitude"            value="{{ $draft['latitude'] ?? '' }}">
+                <input type="hidden" name="longitude"           value="{{ $draft['longitude'] ?? '' }}">
+                <input type="hidden" name="geofence_radius"     value="{{ $draft['geofence_radius'] ?? '' }}">
+                <input type="hidden" name="geofence_shape"      value="{{ $draft['geofence_shape'] ?? '' }}">
+                <input type="hidden" name="geofence_polygon"    value="{{ $draft['geofence_polygon'] ?? '' }}">
+                
+                @foreach($draft['verification_type'] ?? [] as $type)
+                    <input type="hidden" name="verification_type[]" value="{{ $type }}">
+                @endforeach
+
+                @foreach($draft['questions'] ?? [] as $index => $q)
+                    <input type="hidden" name="questions[{{ $index }}][title]" value="{{ $q['title'] }}">
+                    <input type="hidden" name="questions[{{ $index }}][type]"  value="{{ $q['type'] }}">
+                    @foreach($q['options'] ?? [] as $optIndex => $opt)
+                        <input type="hidden" name="questions[{{ $index }}][options][]" value="{{ $opt }}">
+                    @endforeach
+                @endforeach
+
                 <button type="submit"
                     class="px-8 py-2.5 rounded-lg bg-primary hover:bg-blue-700 text-white font-bold shadow-lg shadow-blue-500/30 transition-all active:scale-95 flex items-center gap-2">
                     <span>Confirm & Create</span>

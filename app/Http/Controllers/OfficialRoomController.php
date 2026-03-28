@@ -159,6 +159,9 @@ class OfficialRoomController extends Controller
             logger()->error('Time window creation failed: ' . $e->getMessage());
         }
 
+        // 4. Clear the session draft
+        session()->forget('official_room_draft');
+
         return redirect()->route('rooms.official.index')->with('success', 'Official Room created successfully');
     }
 
@@ -175,7 +178,7 @@ class OfficialRoomController extends Controller
      */
     public function edit(Room $room)
     {
-        //
+        
     }
 
     /**

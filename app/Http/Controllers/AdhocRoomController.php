@@ -71,11 +71,25 @@ class AdhocRoomController extends Controller
      */
     public function store(Request $request)
     {
-        $data = session('adhoc_room_draft');
-
-        if (!$data) {
-            return redirect()->route('rooms.adhoc.create')->with('error', 'Session expired. Please start over.');
-        }
+        // 1. Validate the data coming from the review page form
+        $data = $request->validate([
+            'name'                => 'required|string|max:255',
+            'description'         => 'nullable|string',
+            'wifi_bssid'          => 'required|string',
+            'verification_type'   => 'nullable|array',
+            'activation_date'     => 'required|date',
+            'activation_time'     => 'required|date_format:H:i',
+            'activation_duration' => 'required|integer|min:1',
+            'latitude'            => 'nullable|numeric',
+            'longitude'           => 'nullable|numeric',
+            'geofence_radius'     => 'nullable|numeric',
+            'geofence_shape'      => 'nullable|in:circle,polygon',
+            'geofence_polygon'    => 'nullable|string',
+            'questions'           => 'nullable|array',
+            'questions.*.title'   => 'required|string|max:255',
+            'questions.*.type'    => 'required|in:text,radio,checkbox',
+            'questions.*.options' => 'nullable|array',
+        ]);
 
         $user = $request->user();
 

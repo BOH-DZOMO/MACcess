@@ -43,7 +43,7 @@
                     <label class="text-sm font-medium text-slate-700 dark:text-slate-300" for="roomName">Room Name <span
                             class="text-red-500">*</span></label>
                     <input
-                        class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:placeholder-slate-500 transition-shadow"
+                        class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 placeholder-slate-400 hover:border-slate-300 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:placeholder-slate-500 transition-all shadow-sm"
                         id="roomName" name="name" placeholder="e.g. Main Conference Hall A" type="text"
                         value="{{ old('name', session('adhoc_room_draft.name', '')) }}" />
                 </div>
@@ -51,7 +51,7 @@
                     <label class="text-sm font-medium text-slate-700 dark:text-slate-300"
                         for="description">Description</label>
                     <textarea
-                        class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:placeholder-slate-500 resize-none transition-shadow"
+                        class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 placeholder-slate-400 hover:border-slate-300 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:placeholder-slate-500 resize-none transition-all shadow-sm"
                         id="description" name="description" placeholder="Briefly describe the purpose of this attendance room..." rows="3">{{ old('description', session('adhoc_room_draft.description', '')) }}</textarea>
                 </div>
             </div>
@@ -70,7 +70,7 @@
                     </div>
                     <div class="relative">
                         <input
-                            class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 pl-10 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:placeholder-slate-500 transition-shadow"
+                            class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 pl-10 text-sm text-slate-900 placeholder-slate-400 hover:border-slate-300 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:placeholder-slate-500 transition-all shadow-sm"
                             id="wifiBSSID" name="wifi_bssid" placeholder="xx:xx:xx:xx:xx:xx" type="text"
                             
                             value="{{ old('wifi_bssid', session('adhoc_room_draft.wifi_bssid', '')) }}" />
@@ -141,7 +141,7 @@
                         <span class="material-symbols-outlined text-slate-400">search</span>
                     </div>
                     <input x-model="searchQuery" @keydown.enter.prevent="searchAddress()"
-                        class="block w-full rounded-lg border-slate-200 bg-slate-50 py-3 pl-10 pr-28 text-sm placeholder-slate-500 focus:border-primary focus:bg-white focus:ring-1 focus:ring-primary dark:border-slate-600 dark:bg-slate-800 dark:placeholder-slate-400 dark:text-white transition-all shadow-sm"
+                        class="block w-full rounded-lg border border-slate-200 bg-slate-50 py-3 pl-10 pr-28 text-sm placeholder-slate-500 hover:border-slate-300 focus:outline-none focus:border-primary focus:bg-white focus:ring-1 focus:ring-primary dark:border-slate-600 dark:bg-slate-800 dark:placeholder-slate-400 dark:text-white transition-all shadow-sm"
                         placeholder="Search address, city or coordinates..." type="text" />
                     <button type="button" @click="locateMe()" :disabled="locating"
                         class="absolute inset-y-1 right-1 flex items-center gap-1 rounded-md bg-white px-3 text-xs font-semibold text-slate-600 hover:bg-slate-100 border border-slate-200 shadow-sm dark:bg-slate-700 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-600 transition-colors disabled:opacity-60">
@@ -211,13 +211,13 @@
                                     <div class="relative w-full">
                                         <span class="absolute left-2 top-1.5 text-[10px] text-slate-400 font-bold">LAT</span>
                                         <input x-model="lat" @change="onManualCoordChange()"
-                                            class="w-full pl-8 pr-2 py-1.5 text-xs font-mono rounded border-slate-200 bg-white text-slate-700 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary dark:bg-slate-900 dark:border-slate-600 dark:text-slate-300 transition-shadow"
+                                            class="w-full pl-8 pr-2 py-1.5 text-xs font-mono rounded border border-slate-200 bg-white text-slate-700 hover:border-slate-300 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary dark:bg-slate-900 dark:border-slate-600 dark:text-slate-300 transition-all shadow-sm"
                                             type="text" placeholder="—" />
                                     </div>
                                     <div class="relative w-full">
                                         <span class="absolute left-2 top-1.5 text-[10px] text-slate-400 font-bold">LNG</span>
                                         <input x-model="lng" @change="onManualCoordChange()"
-                                            class="w-full pl-8 pr-2 py-1.5 text-xs font-mono rounded border-slate-200 bg-white text-slate-700 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary dark:bg-slate-900 dark:border-slate-600 dark:text-slate-300 transition-shadow"
+                                            class="w-full pl-8 pr-2 py-1.5 text-xs font-mono rounded border border-slate-200 bg-white text-slate-700 hover:border-slate-300 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary dark:bg-slate-900 dark:border-slate-600 dark:text-slate-300 transition-all shadow-sm"
                                             type="text" placeholder="—" />
                                     </div>
                                 </div>
@@ -460,7 +460,7 @@
                     <div class="space-y-2">
                         <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Start Date</label>
                         <input
-                            class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-lg font-mono font-bold text-slate-800 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary dark:border-slate-600 dark:bg-slate-800/70 dark:text-white transition-all shadow-sm"
+                            class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-lg font-mono font-bold text-slate-800 hover:border-slate-300 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary dark:border-slate-600 dark:bg-slate-800/70 dark:text-white transition-all shadow-sm"
                             type="date"
                             name="activation_date"
                             
@@ -470,7 +470,7 @@
                     <div class="space-y-2">
                         <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Start Time</label>
                         <input
-                            class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-lg font-mono font-bold text-slate-800 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary dark:border-slate-600 dark:bg-slate-800/70 dark:text-white transition-all shadow-sm"
+                            class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-lg font-mono font-bold text-slate-800 hover:border-slate-300 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary dark:border-slate-600 dark:bg-slate-800/70 dark:text-white transition-all shadow-sm"
                             type="time"
                             name="activation_time"
                             
@@ -481,7 +481,7 @@
                         <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Duration (Minutes)</label>
                         <div class="relative">
                             <input
-                                class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 pr-12 text-lg font-mono font-bold text-slate-800 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary dark:border-slate-600 dark:bg-slate-800/70 dark:text-white transition-all shadow-sm"
+                                class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 pr-12 text-lg font-mono font-bold text-slate-800 hover:border-slate-300 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary dark:border-slate-600 dark:bg-slate-800/70 dark:text-white transition-all shadow-sm"
                                 type="number"
                                 min="1"
                                 name="activation_duration"
@@ -499,7 +499,7 @@
             {{-- ============================================================ --}}
             {{-- QUESTIONS & FEEDBACK SECTION                                 --}}
             {{-- ============================================================ --}}
-            <div class="flex flex-col gap-6 pt-2" id="section-questions" x-data="questionsManager()">
+            <div class="flex flex-col gap-6 pt-2" id="section-questions" x-data="questionsManager()" @validate-questions.window="if(validate()) $el.closest('form').submit()">
                 <div class="flex justify-between items-center">
                     <div>
                         <h3 class="text-lg font-bold text-slate-900 dark:text-white">Questions &amp; Feedback</h3>
@@ -517,11 +517,14 @@
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                                 <div class="md:col-span-2 space-y-1">
                                     <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Question Title</label>
-                                    <input type="text" x-model="q.title" :name="`questions[${index}][title]`" class="w-full rounded-lg border-slate-200 px-3 py-2 text-sm focus:border-primary focus:ring-1 focus:ring-primary dark:bg-slate-900 dark:border-slate-600 dark:text-white"  placeholder="e.g. How was the event?" />
+                                    <input type="text" x-model="q.title" :name="`questions[${index}][title]`" 
+                                           class="w-full rounded-lg border px-3 py-2 text-sm hover:border-slate-300 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary dark:bg-slate-900 dark:text-white transition-all shadow-sm"
+                                           :class="showErrors && !q.title.trim() ? 'border-red-500 dark:border-red-500' : 'border-slate-200 dark:border-slate-600'"
+                                           placeholder="e.g. How was the event?" />
                                 </div>
                                 <div class="space-y-1">
                                     <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Type</label>
-                                    <select x-model="q.type" :name="`questions[${index}][type]`" class="w-full rounded-lg border-slate-200 px-3 py-2 text-sm focus:border-primary focus:ring-1 focus:ring-primary dark:bg-slate-900 dark:border-slate-600 dark:text-white">
+                                    <select x-model="q.type" :name="`questions[${index}][type]`" class="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm hover:border-slate-300 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary dark:bg-slate-900 dark:border-slate-600 dark:text-white transition-all shadow-sm">
                                         <option value="text">Short Answer</option>
                                         <option value="radio">Single Choice (Radio)</option>
                                         <option value="checkbox">Multiple Choice (Checkboxes)</option>
@@ -535,7 +538,10 @@
                                 <template x-for="(opt, optIndex) in q.options" :key="optIndex">
                                     <div class="flex items-center gap-2 mb-2">
                                         <span class="material-symbols-outlined text-slate-400 text-[16px]" x-text="q.type === 'radio' ? 'radio_button_unchecked' : 'check_box_outline_blank'"></span>
-                                        <input type="text" x-model="q.options[optIndex]" :name="`questions[${index}][options][]`" class="flex-1 rounded-md border-b border-transparent bg-transparent px-2 py-1 text-sm hover:border-slate-300 focus:border-primary focus:bg-white dark:text-white dark:focus:bg-slate-800 transition-colors cursor-text" placeholder="Option text..." />
+                                        <input type="text" x-model="q.options[optIndex]" :name="`questions[${index}][options][]`" 
+                                               class="flex-1 rounded-md border bg-transparent px-3 py-1.5 text-sm hover:border-slate-300 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary focus:bg-white dark:text-white dark:focus:bg-slate-900 transition-all shadow-sm cursor-text" 
+                                               :class="showErrors && !q.options[optIndex].trim() ? 'border-red-500 dark:border-red-500' : 'border-slate-200 dark:border-slate-600'"
+                                               placeholder="Option text..." />
                                         <button type="button" @click="removeOption(index, optIndex)" class="text-slate-400 hover:text-red-500">
                                             <span class="material-symbols-outlined text-[16px]">close</span>
                                         </button>
@@ -544,6 +550,7 @@
                                 <button type="button" @click="addOption(index)" class="flex items-center gap-1 text-sm font-semibold text-primary hover:text-blue-600 mt-2">
                                     <span class="material-symbols-outlined text-[16px]">add</span> Add Option
                                 </button>
+                                <p x-show="showErrors && (q.type === 'radio' || q.type === 'checkbox') && q.options.length === 0" class="text-xs text-red-500 mt-1">At least one option is required.</p>
                             </div>
                         </div>
                     </template>
@@ -553,6 +560,10 @@
                         Add Question
                     </button>
                     <p x-show="questions.length >= 5" class="text-xs text-center text-slate-500">You have reached the maximum of 5 questions.</p>
+                    <div x-show="showErrors" x-transition class="p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 flex items-center gap-2 text-red-600 dark:text-red-400 text-sm">
+                        <span class="material-symbols-outlined text-[18px]">error</span>
+                        <p>Please fix the errors in your questions before continuing.</p>
+                    </div>
                 </div>
             </div>
             
@@ -572,19 +583,42 @@
                                     id: Date.now().toString(),
                                     title: '',
                                     type: 'text',
-                                    options: ['Option 1']
+                                    options: ['']
                                 });
                             },
                             removeQuestion(index) {
                                 this.questions.splice(index, 1);
                             },
                             addOption(qIndex) {
-                                this.questions[qIndex].options.push(`Option ${this.questions[qIndex].options.length + 1}`);
+                                this.questions[qIndex].options.push("");
                             },
                             removeOption(qIndex, optIndex) {
                                 if (this.questions[qIndex].options.length > 1) {
                                     this.questions[qIndex].options.splice(optIndex, 1);
+                                } else {
+                                    this.questions[qIndex].options[optIndex] = "";
                                 }
+                            },
+                            showErrors: false,
+                            validate() {
+                                this.showErrors = false;
+                                let isValid = true;
+                                
+                                for (let q of this.questions) {
+                                    if (!q.title.trim()) isValid = false;
+                                    if (q.type === 'radio' || q.type === 'checkbox') {
+                                        if (q.options.length === 0) isValid = false;
+                                        if (q.options.some(opt => !opt.trim())) isValid = false;
+                                    }
+                                }
+                                
+                                if (!isValid) {
+                                    this.showErrors = true;
+                                    // Scroll to the questions section if there are errors
+                                    document.getElementById('section-questions').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                }
+                                
+                                return isValid;
                             }
                         };
                     }
@@ -598,7 +632,7 @@
                 class="px-6 py-2.5 rounded-lg text-sm font-bold text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white">
                 Cancel
             </a>
-            <button type="submit" form="create-adhoc-form"
+            <button type="button" @click="$dispatch('validate-questions')"
                 class="flex items-center gap-2 px-6 py-2.5 rounded-lg bg-primary text-white text-sm font-bold shadow-lg shadow-primary/30 hover:bg-blue-600 transition-all active:scale-95">
                 Next: Review
                 <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
