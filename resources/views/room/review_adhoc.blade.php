@@ -43,10 +43,17 @@
                             {{ $draft['name'] ?? '—' }}
                         </span>
                     </div>
-                    <div class="flex flex-col gap-1">
+                    <div class="flex flex-col gap-1 md:col-span-2">
                         <span class="text-sm font-medium text-slate-500 dark:text-slate-400">Description</span>
                         <span class="text-base font-normal text-slate-900 dark:text-white">
                             {{ $draft['description'] ?? '—' }}
+                        </span>
+                    </div>
+                    <div class="flex flex-col gap-1 md:col-span-2 mt-2 pt-4 border-t border-slate-100 dark:border-slate-800">
+                        <span class="text-sm font-medium text-slate-500 dark:text-slate-400">Physical Location</span>
+                        <span class="text-base font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+                            <span class="material-symbols-outlined text-primary text-sm">pin_drop</span>
+                            {{ $draft['location'] ?? '—' }}
                         </span>
                     </div>
                 </div>
@@ -251,6 +258,7 @@
                 @csrf
                 {{-- Hidden Inputs to "Properly Send Data" --}}
                 <input type="hidden" name="name"                value="{{ $draft['name'] ?? '' }}">
+                <input type="hidden" name="location"            value="{{ $draft['location'] ?? '' }}">
                 <input type="hidden" name="description"         value="{{ $draft['description'] ?? '' }}">
                 <input type="hidden" name="wifi_bssid"          value="{{ $draft['wifi_bssid'] ?? '' }}">
                 <input type="hidden" name="activation_date"     value="{{ $draft['activation_date'] ?? '' }}">

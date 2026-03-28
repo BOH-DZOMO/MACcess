@@ -45,10 +45,17 @@
                                         {{ $draft['name'] ?? '—' }}
                                     </span>
                                 </div>
-                                <div class="flex flex-col gap-1">
+                                <div class="flex flex-col gap-1 md:col-span-2">
                                     <span class="text-sm font-medium text-slate-500 dark:text-slate-400">Description</span>
                                     <span class="text-base font-normal text-slate-900 dark:text-white">
                                         {{ $draft['description'] ?? '—' }}
+                                    </span>
+                                </div>
+                                <div class="flex flex-col gap-1 md:col-span-2 mt-2 pt-4 border-t border-slate-100 dark:border-slate-800">
+                                    <span class="text-sm font-medium text-slate-500 dark:text-slate-400">Physical Location</span>
+                                    <span class="text-base font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-primary text-sm">pin_drop</span>
+                                        {{ $draft['location'] ?? '—' }}
                                     </span>
                                 </div>
                             </div>
@@ -241,6 +248,27 @@
                     </a>
                     <form method="POST" action="{{ route('rooms.official.store') }}">
                         @csrf
+                        {{-- Hidden Inputs to properly submit the session draft --}}
+                        <input type="hidden" name="name"                value="{{ $draft['name'] ?? '' }}">
+                        <input type="hidden" name="location"            value="{{ $draft['location'] ?? '' }}">
+                        <input type="hidden" name="description"         value="{{ $draft['description'] ?? '' }}">
+                        <input type="hidden" name="wifi_bssid"          value="{{ $draft['wifi_bssid'] ?? '' }}">
+                        
+                        @foreach($draft['verification_type'] ?? [] as $type)
+                            <input type="hidden" name="verification_type[]" value="{{ $type }}">
+                        @endforeach
+
+                        <input type="hidden" name="geofence_shape"      value="{{ $draft['geofence_shape'] ?? '' }}">
+                        <input type="hidden" name="latitude"            value="{{ $draft['latitude'] ?? '' }}">
+                        <input type="hidden" name="longitude"           value="{{ $draft['longitude'] ?? '' }}">
+                        <input type="hidden" name="geofence_radius"     value="{{ $draft['geofence_radius'] ?? '' }}">
+                        <input type="hidden" name="geofence_polygon"    value="{{ $draft['geofence_polygon'] ?? '' }}">
+
+                        <input type="hidden" name="timeframe_label"     value="{{ $draft['timeframe_label'] ?? '' }}">
+                        <input type="hidden" name="timeframe_start"     value="{{ $draft['timeframe_start'] ?? '' }}">
+                        <input type="hidden" name="timeframe_end"       value="{{ $draft['timeframe_end'] ?? '' }}">
+                        <input type="hidden" name="timeframe_days"      value="{{ $draft['timeframe_days'] ?? '' }}">
+
                         <button type="submit"
                             class="px-8 py-2.5 rounded-lg bg-primary hover:bg-blue-700 text-white font-bold shadow-lg shadow-blue-500/30 transition-all active:scale-95 flex items-center gap-2">
                             <span>Create Room</span>

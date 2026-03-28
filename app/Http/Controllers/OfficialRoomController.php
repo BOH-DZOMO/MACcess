@@ -54,6 +54,7 @@ class OfficialRoomController extends Controller
             'geofence_radius'     => 'nullable|numeric',
             'geofence_shape'      => 'nullable|in:circle,polygon',
             'geofence_polygon'    => 'nullable|string',
+            'location'            => 'required|string|max:255',
             // Timeframe
             'timeframe_label'     => 'nullable|string|max:255',
             'timeframe_start'     => 'nullable|date_format:H:i',
@@ -83,6 +84,7 @@ class OfficialRoomController extends Controller
             'longitude' => 'required_if:geofence_shape,circle|nullable|numeric',
             'geofence_radius' => 'required_if:geofence_shape,circle|nullable|numeric',
             'geofence_polygon' => 'required_if:geofence_shape,polygon|nullable|string',
+            'location' => 'required|string|max:255',
             'timeframe_label'     => 'required|string|max:255',
             'timeframe_start'     => 'required|date_format:H:i',
             'timeframe_end'       => 'required|date_format:H:i',
@@ -99,9 +101,8 @@ class OfficialRoomController extends Controller
             'room_type' => "structured",
             'wifi_bssid' => $data['wifi_bssid'],
             'verification_type' => json_encode($data['verification_type']),
-            'location' => $data['geofence_shape'] === 'circle' 
-                ? "{$data['latitude']},{$data['longitude']}" 
-                : "polygon",
+            'location' => $data['location'],
+
             'created_by' => $user->id,
         ]);
 

@@ -54,6 +54,13 @@
                         class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 placeholder-slate-400 hover:border-slate-300 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:placeholder-slate-500 resize-none transition-all shadow-sm"
                         id="description" name="description" placeholder="Briefly describe the purpose of this attendance room..." rows="3">{{ old('description', session('adhoc_room_draft.description', '')) }}</textarea>
                 </div>
+                <div class="col-span-1 md:col-span-2 space-y-2">
+                    <label class="text-sm font-medium text-slate-700 dark:text-slate-300" for="location">Physical Location <span class="text-red-500">*</span></label>
+                    <input
+                        class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 placeholder-slate-400 hover:border-slate-300 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:placeholder-slate-500 transition-all shadow-sm"
+                        id="location" name="location" placeholder="e.g. Hall A, Block 3" type="text"
+                        value="{{ old('location', session('adhoc_room_draft.location', '')) }}" />
+                </div>
             </div>
             <hr class="border-slate-100 dark:border-slate-700" />
             <div class="grid grid-cols-1 gap-6 md:grid-cols-2">

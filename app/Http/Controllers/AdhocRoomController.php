@@ -55,6 +55,7 @@ class AdhocRoomController extends Controller
             'geofence_radius'     => 'required_if:requiresGeofence,true|nullable|numeric',
             'geofence_shape'      => 'required_if:requiresGeofence,true|nullable|in:circle,polygon',
             'geofence_polygon'    => 'required_if:requiresGeofence,true|nullable|string',
+            'location'            => 'required|string|max:255',
             'questions'           => 'nullable|array|max:5',
             'questions.*.title'   => 'required|string|max:255',
             'questions.*.type'    => 'required|in:text,radio,checkbox',
@@ -85,6 +86,7 @@ class AdhocRoomController extends Controller
             'geofence_radius'     => 'nullable|numeric',
             'geofence_shape'      => 'nullable|in:circle,polygon',
             'geofence_polygon'    => 'nullable|string',
+            'location'            => 'required|string|max:255',
             'questions'           => 'nullable|array',
             'questions.*.title'   => 'required|string|max:255',
             'questions.*.type'    => 'required|in:text,radio,checkbox',
@@ -102,7 +104,8 @@ class AdhocRoomController extends Controller
             'wifi_bssid' => $data['wifi_bssid'],
             'created_by' => $user->id,
             'verification_type' => $data['verification_type'] ?? [],
-            'location' => $data['latitude'] ? $data['latitude'] . ',' . $data['longitude'] : '0,0',
+            'location' => $data['location'],
+
             'metadata' => json_encode([
                 'questions' => $data['questions'] ?? [],
                 'activation_date' => $data['activation_date'],
