@@ -157,7 +157,7 @@
                     <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                         <span class="material-symbols-outlined text-slate-400">search</span>
                     </div>
-                    <input x-model="searchQuery" @keydown.enter.prevent="searchAddress()" name="location"
+                    <input x-model="searchQuery" @keydown.enter.prevent="searchAddress()"
                         class="block w-full rounded-lg border border-slate-200 bg-slate-50 py-3 pl-10 pr-28 text-sm placeholder-slate-500 hover:border-slate-300 focus:outline-none focus:border-primary focus:bg-white focus:ring-1 focus:ring-primary dark:border-slate-600 dark:bg-slate-800 dark:placeholder-slate-400 dark:text-white transition-all shadow-sm"
                         placeholder="Search address, city or coordinates..." type="text" />
                     <button type="button" @click="locateMe()" :disabled="locating"
@@ -382,12 +382,10 @@
                                 const q = this.searchQuery.trim();
                                 if (!q) return;
                                 this.statusMsg = '';
-                                axios.get('https://nominatim.openstreetmap.org/search', { params: { q, format: 'json', limit: 1 }, headers: { 'Accept-Language': 'en' } }).then((res) => {
-                                    if (!res.data.length) { this.statusMsg = 'Address not found.'; return; }
-                                    const { lat, lon, display_name } = res.data[0];
-                                    this.map.setView([lat, lon], 17);
-                                    if (this.shape === 'circle') this.setPin(parseFloat(lat), parseFloat(lon));
                                     this.searchQuery = display_name;
+                                    // Also sync with the primary "Physical Location" field at the top
+                                    const locField = document.getElementById('location');
+                                    if (locField) locField.value = display_name;
                                 }).catch(() => { this.statusMsg = 'Geocoding request failed.'; });
                             },
                             setPin(lat, lng) {
