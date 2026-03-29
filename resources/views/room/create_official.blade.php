@@ -150,7 +150,11 @@
                 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
             @endonce
 
-            <div class="flex flex-col gap-6" x-data="geofenceMap('{{ old('latitude', session('official_room_draft.latitude', '')) }}', '{{ old('longitude', session('official_room_draft.longitude', '')) }}', '{{ old('geofence_radius', session('official_room_draft.geofence_radius', 50)) }}', '{{ old('geofence_shape', session('official_room_draft.geofence_shape', 'circle')) }}', '{{ old('geofence_polygon', session('official_room_draft.geofence_polygon', '')) }}')" x-init="init()" id="section-location">
+            <div class="flex flex-col gap-6" 
+                x-data="geofenceMap('{{ old('latitude', session('official_room_draft.latitude', '')) }}', '{{ old('longitude', session('official_room_draft.longitude', '')) }}', '{{ old('geofence_radius', session('official_room_draft.geofence_radius', 50)) }}', '{{ old('geofence_shape', session('official_room_draft.geofence_shape', 'circle')) }}', '{{ old('geofence_polygon', session('official_room_draft.geofence_polygon', '')) }}')" 
+                x-init="init()" 
+                @reset-all.window="reset()"
+                id="section-location">
 
                 {{-- Section Header --}}
                 <div>
@@ -512,6 +516,19 @@
                                 if (this.polygonPoints.length < 2) return;
                                 this.polygonLine = L.polyline(this.polygonPoints, { color: '#3b82f6', weight: 2, dashArray: '4 4' }).addTo(this.map);
                             },
+
+                            reset() {
+                                this.clearPolygon();
+                                if (this.marker)  { this.marker.remove();  this.marker  = null; }
+                                if (this.overlay) { this.overlay.remove(); this.overlay = null; }
+                                this.lat = '';
+                                this.lng = '';
+                                this.radius = 50;
+                                this.shape = 'circle';
+                                this.statusMsg = '';
+                                this.searchQuery = '';
+                                this.map.setView([20, 0], 2);
+                            }
                         };
                     }
                 </script>
@@ -519,7 +536,11 @@
 
             <hr class="border-slate-100 dark:border-slate-700" />
 
-            <div class="flex flex-col gap-6 pt-2" x-data="timeframe('{{ old('timeframe_label', session('official_room_draft.timeframe_label', '')) }}', '{{ old('timeframe_start', session('official_room_draft.timeframe_start', '')) }}', '{{ old('timeframe_end', session('official_room_draft.timeframe_end', '')) }}', '{{ old('timeframe_days', session('official_room_draft.timeframe_days', '')) }}')" x-init="init()" id="section-timeframe">
+            <div class="flex flex-col gap-6 pt-2" 
+                x-data="timeframe('{{ old('timeframe_label', session('official_room_draft.timeframe_label', '')) }}', '{{ old('timeframe_start', session('official_room_draft.timeframe_start', '')) }}', '{{ old('timeframe_end', session('official_room_draft.timeframe_end', '')) }}', '{{ old('timeframe_days', session('official_room_draft.timeframe_days', '')) }}')" 
+                x-init="init()" 
+                @reset-all.window="reset()"
+                id="section-timeframe">
 
 
 
@@ -713,6 +734,14 @@
                                     ? 'End time must be after start time.'
                                     : '';
                             },
+
+                            reset() {
+                                this.shiftLabel = '';
+                                this.startTime = '';
+                                this.endTime = '';
+                                this.timeError = '';
+                                this.setPreset('weekday');
+                            }
                         };
                     }
                 </script>
@@ -721,10 +750,12 @@
         </div>
         </div>{{-- /card --}}
         <div class="mt-8 flex justify-end gap-4">
-            <a href="{{ route('rooms.official.index') }}"
+            <button type="button"
+                id="cancel-btn"
+                onclick="window.dispatchEvent(new CustomEvent('reset-all'))"
                 class="px-6 py-2.5 rounded-lg text-sm font-bold text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white">
                 Cancel
-            </a>
+            </button>
             <button type="submit" form="create-official-form"
                 class="flex items-center gap-2 px-6 py-2.5 rounded-lg bg-primary text-white text-sm font-bold shadow-lg shadow-primary/30 hover:bg-blue-600 transition-all active:scale-95">
                 Next: Review
@@ -772,11 +803,26 @@
                 });
             });
 
-            // ── Clear draft on successful submit ─────────────────────────
+            // ── Clear draft on successful submit or cancel ──────────────
             const form = document.getElementById('create-official-form');
+            const cancelBtn = document.getElementById('cancel-btn');
+
             if (form) {
                 form.addEventListener('submit', () => {
                     localStorage.removeItem(DRAFT_KEY);
+                });
+            }
+
+            if (cancelBtn) {
+                cancelBtn.addEventListener('click', (e) => {
+                    localStorage.removeItem(DRAFT_KEY);
+                    if (form) {
+                        form.reset();
+                        // Manually clear text fields as reset() only reverts to initial HTML values (which might be old() data)
+                        form.querySelectorAll('input[type="text"], input[type="time"], textarea').forEach(input => {
+                            input.value = '';
+                        });
+                    }
                 });
             }
         })();

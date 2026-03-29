@@ -31,7 +31,11 @@
             </div>
         </div>
 
-        <form action="{{ route('rooms.adhoc.store-session') }}" method="POST" id="create-adhoc-form" x-data="{ requiresGeofence: {{ in_array('geofence', old('verification_type', session('adhoc_room_draft.verification_type', []))) ? 'true' : 'false' }} }">
+        <form action="{{ route('rooms.adhoc.store-session') }}" 
+              method="POST" 
+              id="create-adhoc-form" 
+              x-data="{ requiresGeofence: {{ in_array('geofence', old('verification_type', session('adhoc_room_draft.verification_type', []))) ? 'true' : 'false' }} }"
+              @reset-all.window="requiresGeofence = false">
         @csrf
         <div
             class="flex flex-col gap-8 rounded-xl bg-white p-6 shadow-sm border border-slate-200 dark:bg-[#1e2736] dark:border-slate-700 dark:shadow-none">
@@ -135,7 +139,13 @@
                 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
             @endonce
 
-            <div x-show="requiresGeofence" x-transition class="flex flex-col gap-6" x-data="geofenceMap('{{ old('latitude', session('adhoc_room_draft.latitude', '')) }}', '{{ old('longitude', session('adhoc_room_draft.longitude', '')) }}', '{{ old('geofence_radius', session('adhoc_room_draft.geofence_radius', 50)) }}', '{{ old('geofence_shape', session('adhoc_room_draft.geofence_shape', 'circle')) }}', '{{ old('geofence_polygon', session('adhoc_room_draft.geofence_polygon', '')) }}')" x-init="init()" id="section-location">
+            <div x-show="requiresGeofence" 
+                x-transition 
+                class="flex flex-col gap-6" 
+                x-data="geofenceMap('{{ old('latitude', session('adhoc_room_draft.latitude', '')) }}', '{{ old('longitude', session('adhoc_room_draft.longitude', '')) }}', '{{ old('geofence_radius', session('adhoc_room_draft.geofence_radius', 50)) }}', '{{ old('geofence_shape', session('adhoc_room_draft.geofence_shape', 'circle')) }}', '{{ old('geofence_polygon', session('adhoc_room_draft.geofence_polygon', '')) }}')" 
+                x-init="init()" 
+                @reset-all.window="reset()"
+                id="section-location">
 
                 <div>
                     <h3 class="text-lg font-bold text-slate-900 dark:text-white">Location &amp; Geofence</h3>
@@ -447,6 +457,19 @@
                                 if (this.polygonPoints.length < 2) return;
                                 this.polygonLine = L.polyline(this.polygonPoints, { color: '#3b82f6', weight: 2, dashArray: '4 4' }).addTo(this.map);
                             },
+
+                            reset() {
+                                this.clearPolygon();
+                                if (this.marker)  { this.marker.remove();  this.marker  = null; }
+                                if (this.overlay) { this.overlay.remove(); this.overlay = null; }
+                                this.lat = '';
+                                this.lng = '';
+                                this.radius = 50;
+                                this.shape = 'circle';
+                                this.statusMsg = '';
+                                this.searchQuery = '';
+                                this.map.setView([20, 0], 2);
+                            }
                         };
                     }
                 </script>
@@ -506,7 +529,7 @@
             {{-- ============================================================ --}}
             {{-- QUESTIONS & FEEDBACK SECTION                                 --}}
             {{-- ============================================================ --}}
-            <div class="flex flex-col gap-6 pt-2" id="section-questions" x-data="questionsManager()" @validate-questions.window="if(validate()) $el.closest('form').submit()">
+            <div class="flex flex-col gap-6 pt-2" id="section-questions" x-data="questionsManager()" @validate-questions.window="if(validate()) $el.closest('form').submit()" @reset-all.window="reset()">
                 <div class="flex justify-between items-center">
                     <div>
                         <h3 class="text-lg font-bold text-slate-900 dark:text-white">Questions &amp; Feedback</h3>
@@ -626,6 +649,11 @@
                                 }
                                 
                                 return isValid;
+                            },
+
+                            reset() {
+                                this.questions = [];
+                                this.showErrors = false;
                             }
                         };
                     }
@@ -635,10 +663,12 @@
         </div>
 
         <div class="mt-8 flex justify-end gap-4">
-            <a href="{{ route('rooms.adhoc.index') }}"
+            <button type="button"
+                id="cancel-btn"
+                onclick="window.dispatchEvent(new CustomEvent('reset-all'))"
                 class="px-6 py-2.5 rounded-lg text-sm font-bold text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white">
                 Cancel
-            </a>
+            </button>
             <button type="button" @click="$dispatch('validate-questions')"
                 class="flex items-center gap-2 px-6 py-2.5 rounded-lg bg-primary text-white text-sm font-bold shadow-lg shadow-primary/30 hover:bg-blue-600 transition-all active:scale-95">
                 Next: Review
@@ -678,9 +708,27 @@
             });
 
             const form = document.getElementById('create-adhoc-form');
+            const cancelBtn = document.getElementById('cancel-btn');
+
             if (form) {
                 form.addEventListener('submit', () => {
                     localStorage.removeItem(DRAFT_KEY);
+                });
+            }
+
+            if (cancelBtn) {
+                cancelBtn.addEventListener('click', (e) => {
+                    localStorage.removeItem(DRAFT_KEY);
+                    if (form) {
+                        form.reset();
+                        // Explicitly clear checkboxes as form.reset() might keep old() checked states
+                        form.querySelectorAll('input[type="text"], input[type="number"], input[type="time"], input[type="date"], textarea').forEach(input => {
+                            input.value = '';
+                        });
+                        form.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                            checkbox.checked = false;
+                        });
+                    }
                 });
             }
         })();

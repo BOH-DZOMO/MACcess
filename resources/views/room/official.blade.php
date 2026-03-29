@@ -118,12 +118,14 @@
                         <td class="px-6 py-4 whitespace-nowrap text-right">
                             <div
                                 class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <a href="{{ route('rooms.official.show', $room) }}"
+                                {{-- <a href="{{ route('rooms.official.show', $room) }}" --}}
+                                <a href=""
                                     class="p-1.5 rounded-md text-slate-500 hover:text-primary hover:bg-primary/10 transition-colors"
                                     title="View Details">
                                     <span class="material-symbols-outlined text-[20px]">visibility</span>
                                 </a>
-                                <a href="{{ route('rooms.official.edit', $room) }}"
+                                {{-- <a href="{{ route('rooms.official.edit', $room) }}" --}}
+                                <a href=""
                                     class="p-1.5 rounded-md text-slate-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-colors"
                                     title="Edit Room">
                                     <span class="material-symbols-outlined text-[20px]">edit</span>
