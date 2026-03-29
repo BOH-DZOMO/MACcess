@@ -17,7 +17,13 @@ class AdhocRoomController extends Controller
 
     public function index()
     {
-        return view('room.adhoc');
+        $rooms = Room::select(['id', 'name', 'room_uuid', 'description', 'delete_status', 'updated_at', 'created_at'])
+            ->where('room_type', 'unstructured')
+            ->where('delete_status', 0)
+            ->latest()
+            ->simplePaginate(10);
+
+        return view('room.adhoc', compact('rooms'));
     }
     /**
      * Show the review page with session draft data.
@@ -76,7 +82,7 @@ class AdhocRoomController extends Controller
         $data = $request->validate([
             'name'                => 'required|string|max:255',
             'description'         => 'nullable|string',
-            'wifi_bssid'          => 'required|string',
+            'wifi_bssid'          => 'nullable|string',
             'verification_type'   => 'nullable|array',
             'activation_date'     => 'required|date',
             'activation_time'     => 'required|date_format:H:i',

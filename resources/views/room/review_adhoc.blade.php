@@ -134,7 +134,7 @@
                         <p class="text-sm font-medium text-slate-500 dark:text-slate-400 mb-2">Wi-Fi BSSID Binding</p>
                         <div class="flex items-center gap-3 text-sm text-slate-700 dark:text-slate-200 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg border border-slate-100 dark:border-slate-700">
                             <span class="material-symbols-outlined text-slate-400">router</span>
-                            <span class="font-mono font-bold">{{ $draft['wifi_bssid'] ?? 'Any' }}</span>
+                            <span class="font-mono font-bold">{{ $draft['wifi_bssid'] ?? '—' }}</span>
                         </div>
                     </div>
                 </div>
