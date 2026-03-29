@@ -61,7 +61,7 @@ class AdhocRoomController extends Controller
             'geofence_radius'     => 'required_if:requiresGeofence,true|nullable|numeric',
             'geofence_shape'      => 'required_if:requiresGeofence,true|nullable|in:circle,polygon',
             'geofence_polygon'    => 'required_if:requiresGeofence,true|nullable|string',
-            'location'            => 'required|string|max:255',
+            'location'            => 'nullable|string|max:255',
             'questions'           => 'nullable|array|max:5',
             'questions.*.title'   => 'required|string|max:255',
             'questions.*.type'    => 'required|in:text,radio,checkbox',
