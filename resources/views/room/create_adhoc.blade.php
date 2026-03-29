@@ -309,7 +309,7 @@
                             lat:            initLat,
                             lng:            initLng,
                             radius:         parseInt(initRadius) || 50,
-                            shape:          initShape,
+                            shape:          initShape || 'circle',
                             locating:       false,
                             searchQuery:    initLocation || '',
                             statusMsg:      '',
@@ -382,6 +382,14 @@
                                 const q = this.searchQuery.trim();
                                 if (!q) return;
                                 this.statusMsg = '';
+                                axios.get('https://nominatim.openstreetmap.org/search', {
+                                    params: { q, format: 'json', limit: 1 },
+                                    headers: { 'Accept-Language': 'en' }
+                                }).then((res) => {
+                                    if (!res.data.length) { this.statusMsg = 'Address not found.'; return; }
+                                    const { lat, lon, display_name } = res.data[0];
+                                    this.map.setView([lat, lon], 17);
+                                    if (this.shape === 'circle') this.setPin(parseFloat(lat), parseFloat(lon));
                                     this.searchQuery = display_name;
                                     // Also sync with the primary "Physical Location" field at the top
                                     const locField = document.getElementById('location');

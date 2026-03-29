@@ -350,7 +350,7 @@
                             lat:            initLat,
                             lng:            initLng,
                             radius:         parseInt(initRadius) || 50,
-                            shape:          initShape,
+                            shape:          initShape || 'circle',
                             locating:       false,
                             searchQuery:    '',
                             statusMsg:      '',
