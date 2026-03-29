@@ -142,7 +142,7 @@
             <div x-show="requiresGeofence" 
                 x-transition 
                 class="flex flex-col gap-6" 
-                x-data="geofenceMap('{{ old('latitude', session('adhoc_room_draft.latitude', '')) }}', '{{ old('longitude', session('adhoc_room_draft.longitude', '')) }}', '{{ old('geofence_radius', session('adhoc_room_draft.geofence_radius', 50)) }}', '{{ old('geofence_shape', session('adhoc_room_draft.geofence_shape', 'circle')) }}', '{{ old('geofence_polygon', session('adhoc_room_draft.geofence_polygon', '')) }}')" 
+                x-data="geofenceMap('{{ old('latitude', session('adhoc_room_draft.latitude', '')) }}', '{{ old('longitude', session('adhoc_room_draft.longitude', '')) }}', '{{ old('geofence_radius', session('adhoc_room_draft.geofence_radius', 50)) }}', '{{ old('geofence_shape', session('adhoc_room_draft.geofence_shape', 'circle')) }}', '{{ old('geofence_polygon', session('adhoc_room_draft.geofence_polygon', '')) }}', '{{ old('location', session('adhoc_room_draft.location', '')) }}')" 
                 x-init="init()" 
                 @reset-all.window="reset()"
                 id="section-location">
@@ -157,7 +157,7 @@
                     <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                         <span class="material-symbols-outlined text-slate-400">search</span>
                     </div>
-                    <input x-model="searchQuery" @keydown.enter.prevent="searchAddress()"
+                    <input x-model="searchQuery" @keydown.enter.prevent="searchAddress()" name="location"
                         class="block w-full rounded-lg border border-slate-200 bg-slate-50 py-3 pl-10 pr-28 text-sm placeholder-slate-500 hover:border-slate-300 focus:outline-none focus:border-primary focus:bg-white focus:ring-1 focus:ring-primary dark:border-slate-600 dark:bg-slate-800 dark:placeholder-slate-400 dark:text-white transition-all shadow-sm"
                         placeholder="Search address, city or coordinates..." type="text" />
                     <button type="button" @click="locateMe()" :disabled="locating"
@@ -301,7 +301,7 @@
 
             @once
                 <script>
-                    function geofenceMap(initLat, initLng, initRadius, initShape, initPolygon) {
+                    function geofenceMap(initLat, initLng, initRadius, initShape, initPolygon, initLocation) {
                         return {
                             map:            null,
                             marker:         null,
@@ -311,7 +311,7 @@
                             radius:         parseInt(initRadius) || 50,
                             shape:          initShape,
                             locating:       false,
-                            searchQuery:    '',
+                            searchQuery:    initLocation || '',
                             statusMsg:      '',
                             polygonPoints:  [],
                             polygonMarkers: [],
@@ -601,11 +601,13 @@
                 <script>
                     function questionsManager() {
                         return {
-                            questions: @json(old('questions', session('adhoc_room_draft.questions', []))),
+                            questions: @json(old('questions') ?? session('adhoc_room_draft.questions', [])),
                             init() {
-                                if (this.questions.length === 0) {
-                                    // this.addQuestion(); // Optional: start with 1 empty question
-                                }
+                                // Ensure every loaded question has a unique ID for Alpine :key
+                                this.questions = this.questions.map((q, idx) => {
+                                    if (!q.id) q.id = 'saved-' + idx + '-' + Date.now();
+                                    return q;
+                                });
                             },
                             addQuestion() {
                                 if (this.questions.length >= 5) return;

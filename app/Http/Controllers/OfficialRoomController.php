@@ -17,10 +17,11 @@ class OfficialRoomController extends Controller
      */
     public function index()
     {
-        $rooms = Room::where('room_type', 'structured')
+        $rooms = Room::select(['id', 'name', 'room_uuid', 'description', 'delete_status', 'updated_at', 'created_at'])
+            ->where('room_type', 'structured')
             ->where('delete_status', 0)
             ->latest()
-            ->paginate(10);
+            ->simplePaginate(10);
 
         return view('room.official', compact('rooms'));
     }
