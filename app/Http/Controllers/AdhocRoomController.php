@@ -23,6 +23,23 @@ class AdhocRoomController extends Controller
             ->latest()
             ->simplePaginate(10);
 
+
+        // Fetching raw data for speed
+        // $rooms = DB::table('rooms')
+        //     ->select([
+        //         'id',
+        //         'name',
+        //         'room_uuid',
+        //         'description',
+        //         'delete_status',
+        //         'updated_at',
+        //         'created_at'
+        //     ])
+        //     ->where('room_type', 'unstructured')
+        //     ->where('delete_status', 0)
+        //     ->orderBy('created_at', 'desc') // Manual 'latest()'
+        //     ->simplePaginate(10);
+
         return view('room.adhoc', compact('rooms'));
     }
     /**
@@ -92,7 +109,7 @@ class AdhocRoomController extends Controller
             'geofence_radius'     => 'nullable|numeric',
             'geofence_shape'      => 'nullable|in:circle,polygon',
             'geofence_polygon'    => 'nullable|string',
-            'location'            => 'required|string|max:255',
+            'location'            => 'nullable|string|max:255',
             'questions'           => 'nullable|array',
             'questions.*.title'   => 'required|string|max:255',
             'questions.*.type'    => 'required|in:text,radio,checkbox',
@@ -107,7 +124,7 @@ class AdhocRoomController extends Controller
             'name' => $data['name'],
             'description' => $data['description'] ?? null,
             'room_type' => "unstructured",
-            'wifi_bssid' => $data['wifi_bssid'] ?? 'Any',
+            'wifi_bssid' => $data['wifi_bssid'] ?? null,
             'created_by' => $user->id,
             'verification_type' => $data['verification_type'] ?? [],
             'location' => $data['location'],
@@ -146,9 +163,11 @@ class AdhocRoomController extends Controller
             }
         }
 
+        $duration = (int) $data['activation_duration'];
+
         // 3. One-off time window (Adhoc)
-        $end_time = Carbon::parse($data['activation_time'])->addMinutes($data['activation_duration'])->format('H:i');
-        
+        $end_time = Carbon::parse($data['activation_time'])->addMinutes($duration)->format('H:i');
+
         DB::table('time_windows')->insert([
             'name' => 'Adhoc Activation',
             'room_id' => $room->id,
