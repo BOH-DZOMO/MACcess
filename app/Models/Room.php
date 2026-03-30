@@ -8,6 +8,11 @@ class Room extends Model
 {
     protected $guarded = [];
 
+    protected $casts = [
+        'verification_type' => 'array',
+        'metadata' => 'array',
+    ];
+
     protected function users(){
         return $this->belongsToMany(User::class,"room_memberships","room_id","user_id");
     }

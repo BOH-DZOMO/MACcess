@@ -107,35 +107,43 @@ class AdhocRoomController extends Controller
             'name' => $data['name'],
             'description' => $data['description'] ?? null,
             'room_type' => "unstructured",
-            'wifi_bssid' => $data['wifi_bssid'],
+            'wifi_bssid' => $data['wifi_bssid'] ?? 'Any',
             'created_by' => $user->id,
             'verification_type' => $data['verification_type'] ?? [],
             'location' => $data['location'],
 
-            'metadata' => json_encode([
+            'metadata' => [
                 'questions' => $data['questions'] ?? [],
                 'activation_date' => $data['activation_date'],
                 'activation_time' => $data['activation_time'],
                 'activation_duration' => $data['activation_duration'],
-            ]),
+            ],
         ]);
 
         // 2. Add Geofence if active
         if (in_array('geofence', $data['verification_type'] ?? [])) {
-            $geofence_data = [
-                'room_id' => $room->id,
-                'shape_type' => $data['geofence_shape'],
-            ];
+            try {
+                $boundary = null;
+                if ($data['geofence_shape'] === 'circle') {
+                    $boundary = DB::raw("ST_GeographyFromText('POINT({$data['longitude']} {$data['latitude']})')");
+                } else {
+                    $points = json_decode($data['geofence_polygon'], true);
+                    if (is_array($points)) {
+                        $coordString = implode(', ', array_map(fn($p) => "{$p[1]} {$p[0]}", $points));
+                        $boundary = DB::raw("ST_GeographyFromText('POLYGON(({$coordString}))')");
+                    }
+                }
 
-            if ($data['geofence_shape'] === 'circle') {
-                $geofence_data['center_lat'] = $data['latitude'];
-                $geofence_data['center_lng'] = $data['longitude'];
-                $geofence_data['radius'] = $data['geofence_radius'];
-            } else {
-                $geofence_data['polygon_data'] = $data['geofence_polygon'];
+                RoomGeofence::create([
+                    'room_id' => $room->id,
+                    'shape_type' => $data['geofence_shape'],
+                    'boundary' => $boundary,
+                    'radius' => $data['geofence_radius'] ?? null,
+                    'is_active' => true,
+                ]);
+            } catch (\Exception $e) {
+                logger()->error('Adhoc Geofence creation failed: ' . $e->getMessage());
             }
-
-            RoomGeofence::create($geofence_data);
         }
 
         // 3. One-off time window (Adhoc)

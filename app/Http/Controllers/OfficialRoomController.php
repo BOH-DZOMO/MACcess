@@ -105,8 +105,8 @@ class OfficialRoomController extends Controller
             'name' => $data['name'],
             'description' => $data['description'] ?? null,
             'room_type' => "structured",
-            'wifi_bssid' => $data['wifi_bssid'],
-            'verification_type' => json_encode($data['verification_type']),
+            'wifi_bssid' => $data['wifi_bssid'] ?? 'Any',
+            'verification_type' => $data['verification_type'] ?? [],
             'location' => $data['location'],
 
             'created_by' => $user->id,
