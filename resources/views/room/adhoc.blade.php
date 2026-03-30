@@ -114,7 +114,7 @@
                             @endif
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap hidden md:table-cell">
-                            <span class="text-sm text-slate-600 dark:text-slate-400">{{ $room->updated_at->format('M d, Y') }}</span>
+                            <span class="text-sm text-slate-600 dark:text-slate-400">{{ $room->formatted_updated_at }}</span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right">
                             <div

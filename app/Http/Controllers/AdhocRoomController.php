@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Database\QueryException;
 use Carbon\Carbon;
+use Illuminate\Pagination\Paginator;
 
 class AdhocRoomController extends Controller
 {
@@ -17,28 +18,59 @@ class AdhocRoomController extends Controller
 
     public function index()
     {
-        $rooms = Room::select(['id', 'name', 'room_uuid', 'description', 'delete_status', 'updated_at', 'created_at'])
-            ->where('room_type', 'unstructured')
-            ->where('delete_status', 0)
-            ->latest()
-            ->simplePaginate(10);
+        // $rooms = Room::select(['id', 'name', 'room_uuid', 'description', 'delete_status', 'updated_at', 'created_at'])
+        //     ->where('room_type', 'unstructured')
+        //     ->where('delete_status', 0)
+        //     ->latest()
+        //     ->simplePaginate(10);
 
 
         // Fetching raw data for speed
-        // $rooms = DB::table('rooms')
-        //     ->select([
-        //         'id',
-        //         'name',
-        //         'room_uuid',
-        //         'description',
-        //         'delete_status',
-        //         'updated_at',
-        //         'created_at'
-        //     ])
-        //     ->where('room_type', 'unstructured')
-        //     ->where('delete_status', 0)
-        //     ->orderBy('created_at', 'desc') // Manual 'latest()'
-        //     ->simplePaginate(10);
+        $rooms = DB::table('rooms')
+    ->selectRaw("
+        id, 
+        name, 
+        room_uuid, 
+        description, 
+        delete_status, 
+        TO_CHAR(updated_at, 'Mon DD, YYYY') as formatted_updated_at, 
+        created_at
+    ")
+    ->whereRaw("room_type = 'unstructured' AND delete_status = false")
+    ->orderByRaw("created_at DESC")
+    ->simplePaginate(10);
+
+        //raw sql
+        $perPage = 10;
+    $page = Paginator::resolveCurrentPage() ?: 1;
+    
+    // For simplePaginate, we fetch $perPage + 1 to see if a "next" page exists
+    // $limit = $perPage + 1;
+    // $offset = ($page - 1) * $perPage;
+
+    // $roomsRaw = DB::select("
+    //     SELECT 
+    //         id, 
+    //         name, 
+    //         room_uuid, 
+    //         description, 
+    //         delete_status, 
+    //         TO_CHAR(updated_at, 'Mon DD, YYYY') as formatted_updated_at, 
+    //         created_at
+    //     FROM rooms
+    //     WHERE room_type = 'unstructured' 
+    //       AND delete_status = false
+    //     ORDER BY created_at DESC
+    //     LIMIT ? OFFSET ?
+    // ", [$limit, $offset]);
+
+    // Manually create the SimplePaginator so your Blade @foreach and links still work
+    // $rooms = new Paginator(
+    //     $roomsRaw, 
+    //     $perPage, 
+    //     $page, 
+    //     ['path' => Paginator::resolveCurrentPath()]
+    // );
 
         return view('room.adhoc', compact('rooms'));
     }
