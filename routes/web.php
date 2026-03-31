@@ -16,9 +16,9 @@ Route::get('/', function () {
 //     return view('testing');
 // });
 
-Route::get("/email",function(){
-    Mail::to('bobsbf4@gmail.com')->queue(new EmailActivationOtp("boh dzomo","success"));
-});
+// Route::get("/email",function(){
+//     Mail::to('bobsbf4@gmail.com')->queue(new EmailActivationOtp("boh dzomo","success"));
+// });
 
 Route::get("/test1",function(){
     return view('test');
@@ -53,6 +53,10 @@ Route::prefix('rooms')->name('rooms.')->group(function () {
     Route::post('/official/session', [OfficialRoomController::class, "storeSession"])->name('official.store-session');
     Route::post('/official', [OfficialRoomController::class, "store"])->name('official.store');
     Route::get('/official/create/review', [OfficialRoomController::class, "review"])->name('official.create.review');
+    Route::get('/official/{uuid}', [OfficialRoomController::class, "show"])->name('official.show');
+    Route::delete('/official/{room:room_uuid}', [OfficialRoomController::class, "destroy"])->name('official.destroy');
+    Route::get('/official/{room:room_uuid}/edit', [OfficialRoomController::class, "edit"])->name('official.edit');
+    Route::put('/official/{room:room_uuid}', [OfficialRoomController::class, "update"])->name('official.update');
 
     // Adhoc
     Route::get('/adhoc', [AdhocRoomController::class, "index"])->name('adhoc.index');

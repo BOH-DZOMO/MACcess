@@ -17,11 +17,26 @@ class OfficialRoomController extends Controller
      */
     public function index()
     {
-        $rooms = Room::select(['id', 'name', 'room_uuid', 'description', 'delete_status', 'updated_at', 'created_at'])
-            ->where('room_type', 'structured')
-            ->where('delete_status', 0)
-            ->latest()
+        // $rooms = Room::select(['id', 'name', 'room_uuid', 'description', 'delete_status', 'updated_at', 'created_at'])
+        //     ->where('room_type', 'structured')
+        //     ->where('delete_status', 0)
+        //     ->latest()
+        //     ->simplePaginate(10);
+
+        $rooms = DB::table('rooms')
+            ->selectRaw("
+        id, 
+        name, 
+        room_uuid, 
+        description, 
+        delete_status, 
+        TO_CHAR(updated_at, 'Mon DD, YYYY') as formatted_updated_at, 
+        created_at
+    ")
+            ->whereRaw("room_type = 'structured' AND delete_status = false")
+            ->orderByRaw("created_at DESC")
             ->simplePaginate(10);
+
 
         return view('room.official', compact('rooms'));
     }
@@ -82,8 +97,8 @@ class OfficialRoomController extends Controller
         $data = $request->validate([
             'name' => 'required|string',
             'description' => 'nullable',
-            'wifi_bssid' => 'required|string', 
-            'verification_type' => 'required|array', 
+            'wifi_bssid' => 'required|string',
+            'verification_type' => 'required|array',
             'verification_type.*' => 'in:fingerprint,qrcode',
             'geofence_shape' => 'required|in:circle,polygon',
             'latitude' => 'required_if:geofence_shape,circle|nullable|numeric',
@@ -157,7 +172,7 @@ class OfficialRoomController extends Controller
                         'updated_at' => now(),
                     ];
                 }
-                
+
                 if (!empty($timeWindows)) {
                     DB::table('time_windows')->insert($timeWindows);
                 }
@@ -183,9 +198,8 @@ class OfficialRoomController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Room $room)
-    {
-        
+    public function edit(Room $room) {
+        return view('room.edit_official', compact('room'));
     }
 
     /**
@@ -201,6 +215,10 @@ class OfficialRoomController extends Controller
      */
     public function destroy(Room $room)
     {
-        //
+        $room->update([
+            'delete_status' => 1,
+        ]);
+
+        return redirect()->route('rooms.official.index')->with('success', 'Official Room deleted successfully');
     }
 }

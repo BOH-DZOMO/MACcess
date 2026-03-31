@@ -113,28 +113,32 @@
                             @endif
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap hidden md:table-cell">
-                            <span class="text-sm text-slate-600 dark:text-slate-400">{{ $room->updated_at->format('M d, Y') }}</span>
+                            <span class="text-sm text-slate-600 dark:text-slate-400">{{ $room->formatted_updated_at }}</span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-right">
                             <div
                                 class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                {{-- <a href="{{ route('rooms.official.show', $room) }}" --}}
-                                <a href=""
+                                <a href="{{ route('rooms.official.show', $room->room_uuid) }}"
                                     class="p-1.5 rounded-md text-slate-500 hover:text-primary hover:bg-primary/10 transition-colors"
                                     title="View Details">
                                     <span class="material-symbols-outlined text-[20px]">visibility</span>
                                 </a>
-                                {{-- <a href="{{ route('rooms.official.edit', $room) }}" --}}
-                                <a href=""
+                                <a href="{{ route('rooms.official.edit', $room->room_uuid) }}"
                                     class="p-1.5 rounded-md text-slate-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-colors"
                                     title="Edit Room">
                                     <span class="material-symbols-outlined text-[20px]">edit</span>
                                 </a>
-                                <button
+                                <form action="{{ route('rooms.official.destroy', $room->room_uuid) }}" method="POST">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button
                                     class="p-1.5 rounded-md text-slate-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors"
                                     title="Delete Room">
                                     <span class="material-symbols-outlined text-[20px]">delete</span>
                                 </button>
+                                </form>
+
+                               
                             </div>
                         </td>
                     </tr>

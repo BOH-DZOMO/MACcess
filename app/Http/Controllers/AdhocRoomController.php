@@ -41,8 +41,8 @@ class AdhocRoomController extends Controller
     ->simplePaginate(10);
 
         //raw sql
-        $perPage = 10;
-    $page = Paginator::resolveCurrentPage() ?: 1;
+    //     $perPage = 10;
+    // $page = Paginator::resolveCurrentPage() ?: 1;
     
     // For simplePaginate, we fetch $perPage + 1 to see if a "next" page exists
     // $limit = $perPage + 1;
