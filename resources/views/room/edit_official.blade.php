@@ -2,36 +2,19 @@
 
 
     <div class="mx-auto max-w-5xl">
-        <nav class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 mb-6">
+        {{-- <nav class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 mb-6">
             <a class="hover:text-primary transition-colors" href="#">Rooms</a>
             <span class="material-symbols-outlined text-[16px]">chevron_right</span>
             <span class="font-semibold text-slate-900 dark:text-white">Create New</span>
-        </nav>
+        </nav> --}}
         <div class="mb-8">
             <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
                 <div>
-                    <p class="mt-2 text-slate-500 dark:text-slate-400 text-lg">Step 1 of 2: Define basic details,
-                        connectivity, and location settings.</p>
-                </div>
-            </div>
-            <div class="w-full border-b border-slate-200 dark:border-slate-700">
-                <div class="flex gap-8">
-                    <div class="flex items-center gap-2 border-b-[3px] border-primary pb-3 px-1">
-                        <div
-                            class="flex size-6 items-center justify-center rounded-full bg-primary text-[12px] font-bold text-white">
-                            1</div>
-                        <span class="text-sm font-bold text-primary">Basic Info & Configuration</span>
-                    </div>
-                    <div class="flex items-center gap-2 border-b-[3px] border-transparent pb-3 px-1">
-                        <div
-                            class="flex size-6 items-center justify-center rounded-full bg-slate-200 text-[12px] font-bold text-slate-500 dark:bg-slate-700 dark:text-slate-400">
-                            2</div>
-                        <span class="text-sm font-medium text-slate-500 dark:text-slate-400">Review</span>
-                    </div>
+                    <p class="mt-2 text-slate-500 dark:text-slate-400 text-lg">Esit the official room properties</p>
                 </div>
             </div>
         </div>
-        <form action="{{ route('rooms.official.store-session') }}" method="POST" id="create-official-form">
+        <form action="{{ route('rooms.official.update', $room->room_uuid) }}" method="POST" id="create-official-form">
         @csrf
         <div
             class="flex flex-col gap-8 rounded-xl bg-white p-6 shadow-sm border border-slate-200 dark:bg-[#1e2736] dark:border-slate-700 dark:shadow-none">
@@ -45,21 +28,21 @@
                     <input
                         class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:placeholder-slate-500 transition-shadow"
                         id="roomName" name="name" placeholder="e.g. Main Conference Hall A" type="text"
-                        value="{{ old('name', session('official_room_draft.name', '')) }}" />
+                        value="{{ old('name', $room->name) }}" />
                 </div>
                 <div class="col-span-1 md:col-span-2 space-y-2">
                     <label class="text-sm font-medium text-slate-700 dark:text-slate-300"
                         for="description">Description</label>
                     <textarea
                         class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:placeholder-slate-500 resize-none transition-shadow"
-                        id="description" name="description" placeholder="Briefly describe the purpose of this attendance room..." rows="3">{{ old('description', session('official_room_draft.description', '')) }}</textarea>
+                        id="description" name="description" placeholder="Briefly describe the purpose of this attendance room..." rows="3">{{ old('description', $room->description) }}</textarea>
                 </div>
                 <div class="col-span-1 md:col-span-2 space-y-2">
                     <label class="text-sm font-medium text-slate-700 dark:text-slate-300" for="location">Physical Location <span class="text-red-500">*</span></label>
                     <input
                         class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 placeholder-slate-400 hover:border-slate-300 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:placeholder-slate-500 transition-all shadow-sm"
                         id="location" name="location" placeholder="e.g. Hall A, Block 3" type="text"
-                        value="{{ old('location', session('official_room_draft.location', '')) }}" />
+                        value="{{ old('location', $room->location) }}" />
                 </div>
             </div>
             <hr class="border-slate-100 dark:border-slate-700" />
@@ -79,7 +62,7 @@
                         <input
                             class="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 pl-10 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:placeholder-slate-500 transition-shadow"
                             id="wifiBSSID" name="wifi_bssid" placeholder="xx:xx:xx:xx:xx:xx" type="text"
-                            value="{{ old('wifi_bssid', session('official_room_draft.wifi_bssid', '')) }}" />
+                            value="{{ old('wifi_bssid', $room->wifi_bssid) }}" />
                         <span
                             class="material-symbols-outlined absolute left-3 top-2.5 text-slate-400 text-[20px]">wifi</span>
                     </div>
@@ -111,7 +94,7 @@
                                 Additional Verification(select one or more)</p>
                             <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-2">
                                 <label class="relative cursor-pointer group">
-                                    <input class="peer sr-only" name="verification_type[]" type="checkbox" value="fingerprint" {{ in_array('fingerprint', old('verification_type', session('official_room_draft.verification_type', []))) ? 'checked' : '' }} />
+                                    <input class="peer sr-only" name="verification_type[]" type="checkbox" value="fingerprint" {{ in_array('fingerprint', old('verification_type', $room->verification_type)) ? 'checked' : '' }} />
                                     <div class="flex flex-col h-full rounded-xl border-2 border-slate-200 bg-white p-5 transition-all hover:bg-slate-50 peer-checked:border-primary peer-checked:bg-primary/5 peer-checked:text-primary dark:border-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:peer-checked:bg-primary/10">
                                         <div class="flex justify-between items-start mb-4">
                                             <span class="material-symbols-outlined text-[32px] text-slate-400 dark:text-slate-500 peer-checked:text-primary transition-colors">fingerprint</span>
@@ -123,7 +106,7 @@
                                 </label>
 
                                 <label class="relative cursor-pointer group">
-                                    <input class="peer sr-only" name="verification_type[]" type="checkbox" value="qrcode" {{ in_array('qrcode', old('verification_type', session('official_room_draft.verification_type', []))) ? 'checked' : '' }} />
+                                    <input class="peer sr-only" name="verification_type[]" type="checkbox" value="qrcode" {{ in_array('qrcode', old('verification_type', $room->verification_type)) ? 'checked' : '' }} />
                                     <div class="flex flex-col h-full rounded-xl border-2 border-slate-200 bg-white p-5 transition-all hover:bg-slate-50 peer-checked:border-primary peer-checked:bg-primary/5 peer-checked:text-primary dark:border-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:peer-checked:bg-primary/10">
                                         <div class="flex justify-between items-start mb-4">
                                             <span class="material-symbols-outlined text-[32px] text-slate-400 dark:text-slate-500 peer-checked:text-primary transition-colors">qr_code_scanner</span>
@@ -151,7 +134,7 @@
             @endonce
 
             <div class="flex flex-col gap-6" 
-                x-data="geofenceMap('{{ old('latitude', session('official_room_draft.latitude', '')) }}', '{{ old('longitude', session('official_room_draft.longitude', '')) }}', '{{ old('geofence_radius', session('official_room_draft.geofence_radius', 50)) }}', '{{ old('geofence_shape', session('official_room_draft.geofence_shape', 'circle')) }}', '{{ old('geofence_polygon', session('official_room_draft.geofence_polygon', '')) }}')" 
+                x-data="geofenceMap('{{ old('latitude', $room->latitude) }}', '{{ old('longitude', $room->longitude) }}', '{{ old('geofence_radius', $room->geofence_radius) }}', '{{ old('geofence_shape', $room->geofence_shape) }}', '{{ old('geofence_polygon', $room->geofence_polygon) }}')" 
                 x-init="init()" 
                 @reset-all.window="reset()"
                 id="section-location">
@@ -537,7 +520,7 @@
             <hr class="border-slate-100 dark:border-slate-700" />
 
             <div class="flex flex-col gap-6 pt-2" 
-                x-data="timeframe('{{ old('timeframe_label', session('official_room_draft.timeframe_label', '')) }}', '{{ old('timeframe_start', session('official_room_draft.timeframe_start', '')) }}', '{{ old('timeframe_end', session('official_room_draft.timeframe_end', '')) }}', '{{ old('timeframe_days', session('official_room_draft.timeframe_days', '')) }}')" 
+                x-data="timeframe('{{ old('timeframe_label', $room->timeframe_label) }}', '{{ old('timeframe_start', $room->timeframe_start) }}', '{{ old('timeframe_end', $room->timeframe_end) }}', '{{ old('timeframe_days', $room->timeframe_days) }}')" 
                 x-init="init()" 
                 @reset-all.window="reset()"
                 id="section-timeframe">

@@ -38,6 +38,19 @@ class OfficialRoomController extends Controller
             ->simplePaginate(10);
 
 
+        if (request()->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Official rooms fetched successfully',
+                'data' => ["items" => $rooms->items(), 'pagination' => [
+                    'current_page' => $rooms->currentPage(),
+                    'next_page' => $rooms->nextPageUrl(),
+                    'per_page' => $rooms->perPage(),
+                ]]
+            ]);
+        }   
+
+
         return view('room.official', compact('rooms'));
     }
 
@@ -199,7 +212,13 @@ class OfficialRoomController extends Controller
      * Show the form for editing the specified resource.
      */
     public function edit(Room $room) {
-        return view('room.edit_official', compact('room'));
+        $geofence = DB::table('room_geofences')
+        ->where('room_id', $room->id)
+        ->first();
+        $time_windows = DB::table('time_windows')
+        ->where('room_id', $room->id)
+        ->first();
+        return view('room.edit_official', compact('room','geofence','time_windows'));
     }
 
     /**
