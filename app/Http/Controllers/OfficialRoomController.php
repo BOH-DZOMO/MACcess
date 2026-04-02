@@ -212,13 +212,8 @@ class OfficialRoomController extends Controller
      * Show the form for editing the specified resource.
      */
     public function edit(Room $room) {
-        $geofence = DB::table('room_geofences')
-        ->where('room_id', $room->id)
-        ->first();
-        $time_windows = DB::table('time_windows')
-        ->where('room_id', $room->id)
-        ->first();
-        return view('room.edit_official', compact('room','geofence','time_windows'));
+        $room->load(['geofence', 'timeWindows']);
+        return view('room.edit_official', compact('room'));
     }
 
     /**
@@ -226,7 +221,84 @@ class OfficialRoomController extends Controller
      */
     public function update(Request $request, Room $room)
     {
-        //
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'wifi_bssid' => 'required|string',
+            'verification_type' => 'required|array',
+            'verification_type.*' => 'in:fingerprint,qrcode',
+            'geofence_shape' => 'required|in:circle,polygon',
+            'latitude' => 'required_if:geofence_shape,circle|nullable|numeric',
+            'longitude' => 'required_if:geofence_shape,circle|nullable|numeric',
+            'geofence_radius' => 'required_if:geofence_shape,circle|nullable|numeric',
+            'geofence_polygon' => 'required_if:geofence_shape,polygon|nullable|string',
+            'location' => 'required|string|max:255',
+            'timeframe_label'     => 'required|string|max:255',
+            'timeframe_start'     => 'required|date_format:H:i',
+            'timeframe_end'       => 'required|date_format:H:i',
+            'timeframe_days'      => 'required|string',
+        ]);
+
+        try {
+
+            // 1. Update Room
+            $room->update([
+                'name' => $data['name'],
+                'description' => $data['description'],
+                'wifi_bssid' => $data['wifi_bssid'],
+                'verification_type' => $data['verification_type'],
+                'location' => $data['location'],
+            ]);
+
+            // 2. Update Geofence
+            $boundary = null;
+            if ($data['geofence_shape'] === 'circle') {
+                $boundary = DB::raw("ST_GeographyFromText('POINT({$data['longitude']} {$data['latitude']})')");
+            } else {
+                $points = json_decode($data['geofence_polygon'], true);
+                if (is_array($points)) {
+                    $coordString = implode(', ', array_map(fn($p) => "{$p[1]} {$p[0]}", $points));
+                    $boundary = DB::raw("ST_GeographyFromText('POLYGON(({$coordString}))')");
+                }
+            }
+
+            RoomGeofence::updateOrCreate(
+                ['room_id' => $room->id],
+                [
+                    'shape_type' => $data['geofence_shape'],
+                    'boundary' => $boundary,
+                    'radius' => $data['geofence_radius'] ?? null,
+                ]
+            );
+
+            // 3. Update Time Windows
+            $room->timeWindows()->delete();
+            $daysArray = json_decode($data['timeframe_days'], true);
+            if (is_array($daysArray)) {
+                $dayMapping = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+                $timeWindows = [];
+                foreach ($daysArray as $dayIndex) {
+                    $timeWindows[] = [
+                        'name' => $data['timeframe_label'],
+                        'room_id' => $room->id,
+                        'day' => $dayMapping[$dayIndex] ?? $dayIndex,
+                        'start_time' => $data['timeframe_start'],
+                        'end_time' => $data['timeframe_end'],
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                }
+                if (!empty($timeWindows)) {
+                    DB::table('time_windows')->insert($timeWindows);
+                }
+            }
+
+            return redirect()->route('rooms.official.index')->with('success', 'Official Room updated successfully');
+
+        } catch (\Exception $e) {
+            logger()->error('Official Room Update failed: ' . $e->getMessage());
+            return redirect()->back()->withInput()->with('error', 'Update failed: ' . $e->getMessage());
+        }
     }
 
     /**

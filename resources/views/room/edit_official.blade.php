@@ -16,6 +16,7 @@
         </div>
         <form action="{{ route('rooms.official.update', $room->room_uuid) }}" method="POST" id="create-official-form">
         @csrf
+        @method('PUT')
         <div
             class="flex flex-col gap-8 rounded-xl bg-white p-6 shadow-sm border border-slate-200 dark:bg-[#1e2736] dark:border-slate-700 dark:shadow-none">
             <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -94,7 +95,7 @@
                                 Additional Verification(select one or more)</p>
                             <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-2">
                                 <label class="relative cursor-pointer group">
-                                    <input class="peer sr-only" name="verification_type[]" type="checkbox" value="fingerprint" {{ in_array('fingerprint', old('verification_type', $room->verification_type)) ? 'checked' : '' }} />
+                                    <input class="peer sr-only" name="verification_type[]" type="checkbox" value="fingerprint" {{ in_array('fingerprint', old('verification_type', $room->verification_type ?? [])) ? 'checked' : '' }} />
                                     <div class="flex flex-col h-full rounded-xl border-2 border-slate-200 bg-white p-5 transition-all hover:bg-slate-50 peer-checked:border-primary peer-checked:bg-primary/5 peer-checked:text-primary dark:border-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:peer-checked:bg-primary/10">
                                         <div class="flex justify-between items-start mb-4">
                                             <span class="material-symbols-outlined text-[32px] text-slate-400 dark:text-slate-500 peer-checked:text-primary transition-colors">fingerprint</span>
@@ -106,7 +107,7 @@
                                 </label>
 
                                 <label class="relative cursor-pointer group">
-                                    <input class="peer sr-only" name="verification_type[]" type="checkbox" value="qrcode" {{ in_array('qrcode', old('verification_type', $room->verification_type)) ? 'checked' : '' }} />
+                                    <input class="peer sr-only" name="verification_type[]" type="checkbox" value="qrcode" {{ in_array('qrcode', old('verification_type', $room->verification_type ?? [])) ? 'checked' : '' }} />
                                     <div class="flex flex-col h-full rounded-xl border-2 border-slate-200 bg-white p-5 transition-all hover:bg-slate-50 peer-checked:border-primary peer-checked:bg-primary/5 peer-checked:text-primary dark:border-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:peer-checked:bg-primary/10">
                                         <div class="flex justify-between items-start mb-4">
                                             <span class="material-symbols-outlined text-[32px] text-slate-400 dark:text-slate-500 peer-checked:text-primary transition-colors">qr_code_scanner</span>
@@ -520,7 +521,7 @@
             <hr class="border-slate-100 dark:border-slate-700" />
 
             <div class="flex flex-col gap-6 pt-2" 
-                x-data="timeframe('{{ old('timeframe_label', $room->timeframe_label) }}', '{{ old('timeframe_start', $room->timeframe_start) }}', '{{ old('timeframe_end', $room->timeframe_end) }}', '{{ old('timeframe_days', $room->timeframe_days) }}')" 
+                x-data="timeframe('{{ old('timeframe_label', $room->timeframe_label) }}', '{{ old('timeframe_start', $room->timeframe_start) }}', '{{ old('timeframe_end', $room->timeframe_end) }}', '{{ old('timeframe_days', json_encode($room->timeframe_days)) }}')" 
                 x-init="init()" 
                 @reset-all.window="reset()"
                 id="section-timeframe">
@@ -741,8 +742,8 @@
             </button>
             <button type="submit" form="create-official-form"
                 class="flex items-center gap-2 px-6 py-2.5 rounded-lg bg-primary text-white text-sm font-bold shadow-lg shadow-primary/30 hover:bg-blue-600 transition-all active:scale-95">
-                Next: Review
-                <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                Save Changes
+                <span class="material-symbols-outlined text-[18px]">save</span>
             </button>
         </div>
         </form>{{-- /create-official-form --}}

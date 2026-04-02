@@ -4,11 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class RoomGeofence extends Model
+class TimeWindow extends Model
 {
     protected $guarded = [];
 
     public function room(){
         return $this->belongsTo(Room::class);
     }
+            
 }
