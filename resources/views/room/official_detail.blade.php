@@ -8,18 +8,26 @@
                 </div>
                 <div>
                     <div class="flex items-center gap-3">
-                        <h1 class="text-2xl font-bold">Conference Hall A</h1>
+                        <h1 class="text-2xl font-bold">{{ $room->name }}</h1>
+                        @if(!$room->delete_status)
                         <span
                             class="px-2.5 py-0.5 text-xs font-semibold bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 rounded-full">Active</span>
+                        @else
+                        <span
+                            class="px-2.5 py-0.5 text-xs font-semibold bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 rounded-full">Inactive</span>
+                        @endif
                     </div>
-                    <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">ID: ROOM-CH-001 • Main Office, Floor 3
+                    <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">ID: {{ $room->room_uuid }} • {{ $room->location }}
                     </p>
                 </div>
             </div>
             <div class="flex gap-3">
-                <button
+                <a href="{{ route('rooms.official.edit', $room) }}"
                     class="px-4 py-2 border border-slate-200 dark:border-slate-700 text-sm font-bold rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">Edit
-                    Room</button>
+                    Room</a>
+                <button
+                    class="px-4 py-2 border border-primary text-primary text-sm font-bold rounded-lg hover:bg-primary/5 transition-colors">Invite
+                    </button>
                 <button
                     class="px-4 py-2 bg-primary text-white text-sm font-bold rounded-lg hover:bg-primary/90 transition-colors">Generate
                     Report</button>
@@ -41,12 +49,12 @@
             <div
                 class="bg-white dark:bg-background-dark p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
                 <div class="flex items-center justify-between mb-2">
-                    <span class="text-sm font-medium text-slate-500">Expected Today</span>
+                    <span class="text-sm font-medium text-slate-500">Registered Employees</span>
                     <span class="material-symbols-outlined text-primary">event_available</span>
                 </div>
                 <div class="flex items-end gap-2">
-                    <span class="text-3xl font-bold">56</span>
-                    <span class="text-sm text-slate-400 mb-1">capacity 60</span>
+                    <span class="text-3xl font-bold">{{ $membersCount }}</span>
+                    <span class="text-sm text-slate-400 mb-1">capacity n/a</span>
                 </div>
             </div>
             <div
@@ -72,10 +80,16 @@
                     <div class="w-full md:w-1/2 p-6 space-y-4">
                         <div>
                             <label class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Geofencing
-                                Radius</label>
+                                Status</label>
                             <div class="flex items-center gap-2 mt-1">
-                                <span class="material-symbols-outlined text-slate-500">distance</span>
-                                <span class="font-medium">50 meters</span>
+                                <span class="material-symbols-outlined text-slate-500">{{ $room->geofence_shape === 'circle' ? 'circle' : 'pentagon' }}</span>
+                                <span class="font-medium">
+                                    @if($room->geofence_shape === 'circle')
+                                        Radius: {{ $room->geofence_radius }} meters
+                                    @else
+                                        Polygon (Custom Shape)
+                                    @endif
+                                </span>
                             </div>
                         </div>
                         <div>
@@ -84,11 +98,7 @@
                             <div class="mt-1 space-y-1">
                                 <div class="flex items-center gap-2 text-sm">
                                     <span class="material-symbols-outlined text-xs text-primary">wifi</span>
-                                    <code>CORP_OFFICE_A1</code>
-                                </div>
-                                <div class="flex items-center gap-2 text-sm">
-                                    <span class="material-symbols-outlined text-xs text-primary">wifi</span>
-                                    <code>CORP_OFFICE_A2</code>
+                                    <code>{{ $room->wifi_bssid }}</code>
                                 </div>
                             </div>
                         </div>
@@ -97,18 +107,44 @@
                                 Verification</label>
                             <div class="flex flex-wrap gap-2 mt-2">
                                 <span
-                                    class="px-2 py-1 bg-primary/10 text-primary text-xs font-medium rounded">Biometric</span>
+                                    class="px-2 py-1 bg-primary/10 text-primary text-xs font-medium rounded capitalize">Geofencing</span>
+                                @foreach($room->verification_type ?? [] as $type)
                                 <span
-                                    class="px-2 py-1 bg-primary/10 text-primary text-xs font-medium rounded">Geofencing</span>
-                                <span class="px-2 py-1 bg-primary/10 text-primary text-xs font-medium rounded">BSSID
-                                    Match</span>
+                                    class="px-2 py-1 bg-primary/10 text-primary text-xs font-medium rounded capitalize">{{ $type }}</span>
+                                @endforeach
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Timeframe
+                                Window</label>
+                            <div class="mt-2 space-y-2">
+                                <div class="flex items-center gap-2 text-sm font-bold text-slate-900 dark:text-white">
+                                    <span class="material-symbols-outlined text-xs text-primary">calendar_today</span>
+                                    {{ $room->timeframe_label }}
+                                </div>
+                                <div class="flex items-center gap-4 text-xs text-slate-500">
+                                    <div class="flex items-center gap-1">
+                                        <span class="material-symbols-outlined text-[14px]">schedule</span>
+                                        {{ $room->timeframe_start }} - {{ $room->timeframe_end }}
+                                    </div>
+                                    <div class="flex items-center gap-1">
+                                        <span class="material-symbols-outlined text-[14px]">event_repeat</span>
+                                        @php
+                                            $days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+                                            $selectedDays = collect($room->timeframe_days)->map(fn($i) => $days[$i] ?? '')->filter()->implode(', ');
+                                        @endphp
+                                        {{ $selectedDays ?: 'No days set' }}
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div class="w-full md:w-1/2 min-h-48 bg-slate-200 dark:bg-slate-800 relative">
                         <div class="absolute inset-0 bg-center bg-no-repeat bg-cover"
-                            data-alt="Map showing office geofencing perimeter" data-location="San Francisco"
-                            style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBpO5f5MhRjD3BWCd17kud9ATp72Jn6bvFqJvHlmgwW1ra9e9ySiyJFGPMjd4_t4k7-YFjCZrjnMsf9UfISl2tM6EST2Qlkf07eKup1H_pOclYYjVFAeVquyzTPlj8R-e4CDkudczQJNL_oLDO57AVxOFdO0PObMrGVzZ39Bl5yVSM35oWTdfuAPY9rPuBaAV0r6xXF84epTkwVk8SXBJvKPNeBH5uuO6vwdtbfIma2o2zj3msivJ06SNzlBQiMobFNYdJ-haPIe_M');">
+                            id="room-map"
+                            data-lat="{{ $room->latitude }}"
+                            data-lng="{{ $room->longitude }}"
+                            style="background-image: url('https://maps.googleapis.com/maps/api/staticmap?center={{ $room->latitude }},{{ $room->longitude }}&zoom=16&size=600x300&markers=color:blue%7Clabel:S%7C{{ $room->latitude }},{{ $room->longitude }}&key=YOUR_API_KEY_HERE');">
                         </div>
                         <div class="absolute inset-0 bg-primary/10 flex items-center justify-center">
                             <div class="size-20 bg-primary/20 border-2 border-primary rounded-full animate-pulse"></div>
@@ -124,44 +160,32 @@
                     <span class="bg-primary text-white text-[10px] px-2 py-0.5 rounded-full font-bold">3 NEW</span>
                 </div>
                 <div class="divide-y divide-slate-100 dark:divide-slate-800">
-                    <!-- Request Item -->
-                    <div class="p-4 flex items-center gap-3">
-                        <img class="rounded-full size-10" data-alt="Profile image of employee requesting access"
-                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuA1yD9TjMcFxB69sF4uhoSYzYuX_tV3mcAQHVRMpcWxndsbtryvgqVV-8qjkXBKxjvnkGTK3qi6LH1kn7g2mrEVMpMiVmMfuCGUlx7EqNuRFGHNvFACECATyYwsWF7QUD3hzry9saXBXufqtTHqv6UQdVF9UIwf0lhS2pc6EgYpdmU3s7OsW4OuPoyXPf7bVcrBoc2DBSNd4lRaqezrmeUqVumyZ7lt2902SlwmaOyL_EioVxhfZCilHpxtcPF9iqDcWbYr77HQXNM" />
-                        <div class="flex-1 min-w-0">
-                            <p class="text-sm font-bold truncate">Sarah Johnson</p>
-                            <p class="text-xs text-slate-500 truncate">Product Designer</p>
+                    @forelse($room->joinRequests ?? [] as $request)
+                        <!-- Request Item -->
+                        <div class="p-4 flex items-center gap-3">
+                            <img class="rounded-full size-10" alt="{{ $request->name }}"
+                                src="{{ $request->avatar_url ?? 'https://ui-avatars.com/api/?name='.urlencode($request->name) }}" />
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-bold truncate">{{ $request->name }}</p>
+                                <p class="text-xs text-slate-500 truncate">{{ $request->department ?? 'N/A' }}</p>
+                            </div>
+                            <div class="flex gap-2">
+                                <button
+                                    class="size-8 rounded-lg bg-green-100 text-green-600 hover:bg-green-200 flex items-center justify-center transition-colors">
+                                    <span class="material-symbols-outlined text-sm">check</span>
+                                </button>
+                                <button
+                                    class="size-8 rounded-lg bg-red-100 text-red-600 hover:bg-red-200 flex items-center justify-center transition-colors">
+                                    <span class="material-symbols-outlined text-sm">close</span>
+                                </button>
+                            </div>
                         </div>
-                        <div class="flex gap-2">
-                            <button
-                                class="size-8 rounded-lg bg-green-100 text-green-600 hover:bg-green-200 flex items-center justify-center transition-colors">
-                                <span class="material-symbols-outlined text-sm">check</span>
-                            </button>
-                            <button
-                                class="size-8 rounded-lg bg-red-100 text-red-600 hover:bg-red-200 flex items-center justify-center transition-colors">
-                                <span class="material-symbols-outlined text-sm">close</span>
-                            </button>
+                    @empty
+                        <div class="p-8 text-center bg-slate-50/50 dark:bg-slate-900/20">
+                            <span class="material-symbols-outlined text-slate-300 text-4xl mb-2">person_add</span>
+                            <p class="text-xs text-slate-400 font-medium">No pending requests</p>
                         </div>
-                    </div>
-                    <!-- Request Item -->
-                    <div class="p-4 flex items-center gap-3">
-                        <img class="rounded-full size-10" data-alt="Profile image of employee requesting access"
-                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuB2RhWCoqAWWgAWmGi_RY6qvKDRtLKsteorjs1RvWLVhCjh4-rLWwLKlHR5iu8EOoM1jZAET1JDZ6Y8yvF84zCAKIT-DSSChUnZ3QMGme4ht7omYB9yoMXLONa3l_ZzvM-bWOqBF4-PG8HdN-uqvBytZVhMcscd_lSjfrEfH1DDKzDT3fNeIUHqSylCSbIuO_XhB26WvbxUNhqdMSGoHucPC57iFwnT2Fe-BWq8NZAgqBjiP6AHk68DXGVOWbARHh7KKxD6WkI7POw" />
-                        <div class="flex-1 min-w-0">
-                            <p class="text-sm font-bold truncate">Michael Chen</p>
-                            <p class="text-xs text-slate-500 truncate">QA Engineer</p>
-                        </div>
-                        <div class="flex gap-2">
-                            <button
-                                class="size-8 rounded-lg bg-green-100 text-green-600 hover:bg-green-200 flex items-center justify-center transition-colors">
-                                <span class="material-symbols-outlined text-sm">check</span>
-                            </button>
-                            <button
-                                class="size-8 rounded-lg bg-red-100 text-red-600 hover:bg-red-200 flex items-center justify-center transition-colors">
-                                <span class="material-symbols-outlined text-sm">close</span>
-                            </button>
-                        </div>
-                    </div>
+                    @endforelse
                 </div>
                 <button
                     class="w-full py-3 text-sm font-bold text-primary hover:bg-primary/5 border-t border-slate-100 dark:border-slate-800 transition-colors">
@@ -196,81 +220,41 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
-                        <tr>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="flex items-center gap-3">
-                                    <img class="rounded-full size-8" data-alt="Employee avatar"
-                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXWTJK0uLxLQ1Y81gZ7TK2wrRiyeC-37XAbMea8SSI6BUduHH6FhPnc7lDndMkB4YNyP7e9WsY2Ztkaj2vE-jMxtCP4BIlTSbEm-ec4vHsGusHTKcJ0-UqcfpVow2V5HMPOmnDrkZ9xxvjpR9SGrRPbeNWuaf3wMd130RD48IYfVoDYqt4Szct4tgke2jy1ZLHdVBzL2Kr2CwFNF5BoQfngB-mQXpPFhq-yp4DfGW2GorGddCdO_xk4rYsepV1mrcQuYN-nFTViJ4" />
-                                    <div class="text-sm font-bold">David Wilson</div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">Engineering</td>
-                            <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">Oct 12, 2023</td>
-                            <td class="px-6 py-4">
-                                <div class="flex items-center gap-2">
-                                    <div
-                                        class="w-16 bg-slate-200 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
-                                        <div class="bg-green-500 h-full w-full"></div>
+                        @forelse($room->users ?? [] as $user)
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center gap-3">
+                                        <img class="rounded-full size-8" alt="{{ $user->name }}"
+                                            src="{{ $user->avatar_url ?? 'https://ui-avatars.com/api/?name='.urlencode($user->name) }}" />
+                                        <div class="text-sm font-bold">{{ $user->name }}</div>
                                     </div>
-                                    <span class="text-xs font-medium text-green-600">100%</span>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 text-right">
-                                <button class="text-slate-400 hover:text-primary transition-colors">
-                                    <span class="material-symbols-outlined">more_vert</span>
-                                </button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="flex items-center gap-3">
-                                    <img class="rounded-full size-8" data-alt="Employee avatar"
-                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDcGI2xJWvIYWoYG79LdaAKiK9CoWcHyKIEJInWnmnhNzW7pPKno2O8mRPKhD5L5hk5EvcsdHfbz2QxTlO8bN909z_mHF8wOWqqdL9PRc8bYn61nBdAwpU_mMPhlxY4Sis-N6ScyUSEO_iDymiRmGVYLh1Ki50aKI-TweVdH1LgOzazo6KQ2HzdWEePNtx0Xf0L9Vvgvi8GE4WEFra6LRBESJw0PKwriIC--NtsY9osP1PTPifGRc89IgugUZbyHSwMkw4R_Y4F5K0" />
-                                    <div class="text-sm font-bold">Emma Thompson</div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">Marketing</td>
-                            <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">Jan 05, 2024</td>
-                            <td class="px-6 py-4">
-                                <div class="flex items-center gap-2">
-                                    <div
-                                        class="w-16 bg-slate-200 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
-                                        <div class="bg-yellow-500 h-full w-3/4"></div>
+                                </td>
+                                <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">{{ $user->department ?? 'General' }}</td>
+                                <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">{{ $user->pivot->joined_at->format('M d, Y') }}</td>
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center gap-2">
+                                        <div
+                                            class="w-16 bg-slate-200 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
+                                            <div class="bg-green-500 h-full w-full"></div>
+                                        </div>
+                                        <span class="text-xs font-medium text-green-600">100%</span>
                                     </div>
-                                    <span class="text-xs font-medium text-yellow-600">75%</span>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 text-right">
-                                <button class="text-slate-400 hover:text-primary transition-colors">
-                                    <span class="material-symbols-outlined">more_vert</span>
-                                </button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="flex items-center gap-3">
-                                    <img class="rounded-full size-8" data-alt="Employee avatar"
-                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuCkAyUjDSim-dQXklh1Astjc1SkTDAVUjvwMIjUgW4Un8xW6_FIFF5yPue7YXm8_zGSL5nyMKcZRSuePeScEbzy2SiiL3UJGZ6FIA5BEVM3zcuJaioR4cHIFBHXcNwUlNkhCmtt5GE3sqE3uxIlUNYhNs8JBzxV0YaA7FOB9sQU2aZdoKCSCFnfEatsBV9wC6wdcmcQP5YtXvCKtbBYEERy4OsdaD3AqSIF0vgazGDnbzp7HZy9-0V9GOdIPdDCxsWgb7IjEUwZ8Ts" />
-                                    <div class="text-sm font-bold">Robert Fox</div>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">Operations</td>
-                            <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">Mar 22, 2024</td>
-                            <td class="px-6 py-4">
-                                <div class="flex items-center gap-2">
-                                    <div
-                                        class="w-16 bg-slate-200 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
-                                        <div class="bg-green-500 h-full w-[90%]"></div>
-                                    </div>
-                                    <span class="text-xs font-medium text-green-600">90%</span>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 text-right">
-                                <button class="text-slate-400 hover:text-primary transition-colors">
-                                    <span class="material-symbols-outlined">more_vert</span>
-                                </button>
-                            </td>
-                        </tr>
+                                </td>
+                                <td class="px-6 py-4 text-right">
+                                    <button class="text-slate-400 hover:text-primary transition-colors">
+                                        <span class="material-symbols-outlined">more_vert</span>
+                                    </button>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5" class="px-6 py-12 text-center bg-slate-50/50 dark:bg-slate-900/20">
+                                    <span class="material-symbols-outlined text-slate-300 text-5xl mb-3">group_off</span>
+                                    <p class="text-sm text-slate-400 font-medium tracking-tight">No registered employees yet</p>
+                                    <p class="text-xs text-slate-400/70 mt-1">Approved members will appear here automatically.</p>
+                                </td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>

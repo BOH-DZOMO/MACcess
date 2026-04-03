@@ -205,7 +205,10 @@ class OfficialRoomController extends Controller
      */
     public function show(Room $room)
     {
-        return view('room.official_detail', compact('room'));
+        $room->load(['geofence', 'timeWindows']);
+        $membersCount = $room->users()->count();
+        
+        return view('room.official_detail', compact('room', 'membersCount'));
     }
 
     /**

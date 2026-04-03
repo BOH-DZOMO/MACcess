@@ -14,7 +14,7 @@
                 </div>
             </div>
         </div>
-        <form action="{{ route('rooms.official.update', $room->room_uuid) }}" method="POST" id="create-official-form">
+        <form action="{{ route('rooms.official.update', $room) }}" method="POST" id="create-official-form">
         @csrf
         @method('PUT')
         <div

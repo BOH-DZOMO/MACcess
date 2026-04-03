@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdhocRoomController;
 use App\Http\Controllers\OfficialRoomController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\QRCodeController;
 use App\Mail\EmailActivationOtp;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
@@ -20,6 +21,7 @@ Route::get('/', function () {
 //     Mail::to('bobsbf4@gmail.com')->queue(new EmailActivationOtp("boh dzomo","success"));
 // });
 
+//test
 Route::get("/test1",function(){
     return view('test');
 });
@@ -38,12 +40,17 @@ Route::get("/test5",function(){
 Route::get("/test6",function(){
     return view('ad');
 });
+
+//working
+
 Route::get("/report",[ReportController::class,"index"])->name("report.index");
 
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->name('dashboard');
 // ->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::get("qr-code",[QRCodeController::class, 'index'])->name('qr.code');
 
 Route::prefix('rooms')->name('rooms.')->group(function () {
     
