@@ -14,8 +14,6 @@ COPY . .
 
 # Copy ONLY the built assets from Stage 1 into the public folder
 COPY --from=build-stage /app/public/build ./public/build
-# Change from something like php:8.2-fpm to:
-FROM php:8.4-fpm
 
 # Image config
 ENV WEBROOT /var/www/html/public
