@@ -19,6 +19,10 @@ class Room extends Model
             // ->withTimestamps();
     }
 
+    public function pendingValidations(){
+        return $this->hasmany(PendingValidation::class);
+    }
+
     public function timeWindows(){
         return $this->hasMany(TimeWindow::class);
     }

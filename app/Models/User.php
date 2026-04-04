@@ -44,6 +44,9 @@ class User extends Authenticatable
     public function device(){
         return $this->hasOne(Device::class)->latestOfMany();
     }
+    public function pendingValidations(){
+        return $this->hasMany(PendingValidation::class);
+    }
 
     public function devices(){
         return $this->hasMany(Device::class);
