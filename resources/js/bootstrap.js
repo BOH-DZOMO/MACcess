@@ -5,7 +5,7 @@ window.axios = axios;
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
 
-import { WaveConnector } from 'qruto-laravel-wave';
+import { WaveConnector } from 'laravel-wave';
 
 window.Echo = new Echo({
     broadcaster: WaveConnector,
