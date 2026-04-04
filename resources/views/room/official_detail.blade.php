@@ -22,7 +22,7 @@
                 </div>
             </div>
             <div class="flex gap-3">
-                <a href="{{ route('rooms.official.edit', $room) }}"
+                <a href="{{ route('rooms.official.edit', $room->room_uuid) }}"
                     class="px-4 py-2 border border-slate-200 dark:border-slate-700 text-sm font-bold rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">Edit
                     Room</a>
                 <button

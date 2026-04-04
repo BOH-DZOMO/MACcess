@@ -207,6 +207,7 @@ class OfficialRoomController extends Controller
     {
         $room->load(['geofence', 'timeWindows']);
         $membersCount = $room->users()->count();
+
         
         return view('room.official_detail', compact('room', 'membersCount'));
     }
