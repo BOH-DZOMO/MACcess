@@ -306,6 +306,14 @@ class OfficialRoomController extends Controller
     }
 
     /**
+     * Show the invite page for the specified resource.
+     */
+    public function invite(Room $room)
+    {
+        return view('room.official_invite', compact('room'));
+    }
+
+    /**
      * Remove the specified resource from storage.
      */
     public function destroy(Room $room)

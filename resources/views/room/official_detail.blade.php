@@ -25,9 +25,9 @@
                 <a href="{{ route('rooms.official.edit', $room->room_uuid) }}"
                     class="px-4 py-2 border border-slate-200 dark:border-slate-700 text-sm font-bold rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">Edit
                     Room</a>
-                <button
+                <a href="{{ route('rooms.official.invite', $room->room_uuid) }}"
                     class="px-4 py-2 border border-primary text-primary text-sm font-bold rounded-lg hover:bg-primary/5 transition-colors">Invite
-                    </button>
+                    </a>
                 <button
                     class="px-4 py-2 bg-primary text-white text-sm font-bold rounded-lg hover:bg-primary/90 transition-colors">Generate
                     Report</button>

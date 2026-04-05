@@ -63,6 +63,7 @@ Route::prefix('rooms')->name('rooms.')->group(function () {
     Route::get('/official/{room:room_uuid}', [OfficialRoomController::class, "show"])->name('official.show');
     Route::delete('/official/{room:room_uuid}', [OfficialRoomController::class, "destroy"])->name('official.destroy');
     Route::get('/official/{room:room_uuid}/edit', [OfficialRoomController::class, "edit"])->name('official.edit');
+    Route::get('/official/{room:room_uuid}/invite', [OfficialRoomController::class, "invite"])->name('official.invite');
     Route::put('/official/{room:room_uuid}', [OfficialRoomController::class, "update"])->name('official.update');
 
     // Adhoc
