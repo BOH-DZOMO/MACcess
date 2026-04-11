@@ -11,8 +11,8 @@ class QRCodeController extends Controller
     public function index(){
         $token = $this->generateToken();
         $qr = base64_encode(QrCode::size(200)->generate($token));
-        dispatch(new SendQrCode("h4hriuhiuhi3",$qr));
-        // return view('room.invite', compact('qr'));
+        // event(new SendQrCode("h4hriuhiuhi3",$qr));
+        return view('room.official_invite', compact('qr'));
 }
 
 public function generateToken(){

@@ -21,7 +21,7 @@ ENV APP_ENV production
 ENV RUN_SCRIPTS 1
 
 # Install Laravel parts
-RUN composer install --no-dev --optimize-autoloader --ignore-platform-reqs
+RUN composer install --no-dev --optimize-autoloader
 RUN chown -R www-data:www-data storage bootstrap/cache
 
 # Copy our custom nginx config
