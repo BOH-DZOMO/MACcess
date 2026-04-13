@@ -8,13 +8,15 @@
     <h1>SSE</h1>
     <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quod.</p>
     <div id="output"></div>
-        <script>
-            const output = document.getElementById('output');
-            const eventSource = new EventSource("/sse");
-            eventSource.onmessage = function(event) {
-                output.innerHTML += event.data + "<br>";
-            }
-        </script>
+    <img id="qr-code" src="" alt="Scan me!">
+
+    <script>
+        let img = document.getElementById('qr-code');
+        const eventSource = new EventSource("/sse");
+        eventSource.onmessage = function(event) {
+            img.src = `data:image/svg+xml;base64,${event.data}`;
+        }
+    </script>
     {{-- <h1>Real-time Server Time</h1>
     <div id="time-display">Waiting for data...</div>
     <div id="message-display"></div>

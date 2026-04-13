@@ -22,9 +22,14 @@ class QRCodeController extends Controller
     public function stream()
     {
         $response = new StreamedResponse(function () {
-            echo "data: " . "hello" . "\n\n";
+           while(true){
+            $qr = base64_encode(QrCode::size(300)->generate(Str::random(10)));
+
+             echo "data: " . $qr . "\n\n";
             ob_flush();
             flush();
+            sleep(5);
+           }
         });
         $response->headers->set('Content-Type', 'text/event-stream');
         $response->headers->set('X-Accel-Buffering', 'no');
