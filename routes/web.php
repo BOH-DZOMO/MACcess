@@ -51,6 +51,8 @@ Route::get('/dashboard', function () {
 // ->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get("qr-code",[QRCodeController::class, 'index'])->name('qr.code');
+Route::get("sse_page",[QRCodeController::class, 'sse_page'])->name('sse_page');
+Route::get("sse",[QRCodeController::class, 'stream']);
 
 Route::prefix('rooms')->name('rooms.')->group(function () {
     
