@@ -23,9 +23,10 @@ class QRCodeController extends Controller
     {
         $response = new StreamedResponse(function () {
            while(true){
-            $qr = base64_encode(QrCode::size(300)->generate(Str::random(10)));
-
-             echo "data: " . $qr . "\n\n";
+            $qr = base64_encode(QrCode::size(200)->generate(Str::random(10)));
+            echo "event: ping\n";
+            echo "data: ". json_encode('hello') . "\n\n";
+            echo "data: " . $qr . "\n\n";
             ob_flush();
             flush();
             sleep(5);

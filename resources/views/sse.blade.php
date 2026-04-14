@@ -12,9 +12,19 @@
 
     <script>
         let img = document.getElementById('qr-code');
+        let output = document.getElementById('output');
         const eventSource = new EventSource("/sse");
         eventSource.onmessage = function(event) {
             img.src = `data:image/svg+xml;base64,${event.data}`;
+        }
+        eventSource.addEventListener('ping', function(event) {
+            const data = JSON.parse(event.data);
+            output.innerText = data;
+            console.log(event.data);
+            
+        });
+        eventSource.onerror = function(event) {
+            console.log("Connection lost. Browsers usually retry automatically.");
         }
     </script>
     {{-- <h1>Real-time Server Time</h1>
