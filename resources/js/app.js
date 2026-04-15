@@ -5,6 +5,15 @@ import Alpine from 'alpinejs';
 
 window.Alpine = Alpine;
 
+// This makes the variable global
+window.myAppEventSource = new EventSource("/sse");
+
+// Global listener for notifications (things that happen on every page)
+window.myAppEventSource.addEventListener('notification', (e) => {
+    const data = JSON.parse(e.data);
+    console.log("New alert: " + data.message);
+});
+
 
 Alpine.data('themeHandler', () => ({
     darkMode: false,

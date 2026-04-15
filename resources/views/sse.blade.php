@@ -1,10 +1,4 @@
-<html>
-
-<head>
-    <title>SSE</title>
-</head>
-
-<body>
+<x-app-layout>
     <h1>SSE</h1>
     <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quod.</p>
     <div id="output"></div>
@@ -13,19 +7,25 @@
     <script>
         let img = document.getElementById('qr-code');
         let output = document.getElementById('output');
-        const eventSource = new EventSource("/sse");
-        eventSource.onmessage = function(event) {
-            img.src = `data:image/svg+xml;base64,${event.data}`;
-        }
-        eventSource.addEventListener('ping', function(event) {
-            const data = JSON.parse(event.data);
-            output.innerText = data;
-            console.log(event.data);
-            
+        window.addEventListener('load', () => {
+            if (window.myAppEventSource) {
+                window.myAppEventSource.addEventListener('qr_update', (e) => {
+                    const data = JSON.parse(e.data);
+                    document.getElementById('qr-image').src = data.base64;
+                });
+                window.myAppEventSource.onmessage = function(event) {
+                    const data = JSON.parse(event.data);
+                    output.innerText = data;
+                }
+                window.myAppEventSource.addEventListener('ping', function(event) {
+                    img.src = `data:image/svg+xml;base64,${event.data}`;
+
+                });
+                window.myAppEventSource.onerror = function(event) {
+                    console.log("Connection lost. Browsers usually retry automatically.");
+                }
+            }
         });
-        eventSource.onerror = function(event) {
-            console.log("Connection lost. Browsers usually retry automatically.");
-        }
     </script>
     {{-- <h1>Real-time Server Time</h1>
     <div id="time-display">Waiting for data...</div>
@@ -53,6 +53,4 @@
             console.log("Connection lost. Browsers usually retry automatically.");
         };
     </script> --}}
-</body>
-
-</html>
+</x-app-layout>

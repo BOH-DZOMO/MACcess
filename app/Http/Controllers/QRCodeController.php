@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\SendQrCode;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Support\Str;
@@ -21,15 +22,22 @@ class QRCodeController extends Controller
 
     public function stream()
     {
+        set_time_limit(0);
         $response = new StreamedResponse(function () {
+            $time = Carbon::now();
            while(true){
-            $qr = base64_encode(QrCode::size(200)->generate(Str::random(10)));
-            echo "event: ping\n";
-            echo "data: ". json_encode('hello') . "\n\n";
-            echo "data: " . $qr . "\n\n";
+            // Check if client disconnected
+            if (connection_aborted()) break;
+            if($time->isNowOrPast()){
+                $qr = base64_encode(QrCode::size(200)->generate(Str::random(10)));
+                echo "event: ping\n";
+                echo "data: " . $qr . "\n\n";
+                $time->addSeconds(30);
+            }
+            echo "data: ". json_encode($time->second - now()->second) . "\n\n";
             ob_flush();
             flush();
-            sleep(5);
+            sleep(1);
            }
         });
         $response->headers->set('Content-Type', 'text/event-stream');

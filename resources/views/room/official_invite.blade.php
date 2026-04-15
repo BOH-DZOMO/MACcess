@@ -19,8 +19,7 @@
                 <div
                     class="size-full border-4 border-dashed border-slate-100 dark:border-slate-800 rounded-2xl flex flex-col items-center justify-center gap-4">
                     <div class="size-48 bg-slate-50 dark:bg-slate-800/50 rounded-xl flex items-center justify-center">
-                        <span
-                            class="material-symbols-outlined text-8xl text-slate-200 dark:text-slate-700 animate-pulse">qr_code_2</span>
+                        <img id="qr-code"src="" alt="">
                     </div>
                 </div>
 
@@ -48,5 +47,21 @@
                 <div class="ml-2 size-2 bg-green-500 rounded-full animate-ping"></div>
             </div>
         </div>
+        <div id="output"></div>
     </div>
+    <script>
+        let img = document.getElementById('qr-code');
+        window.addEventListener('load', () => {
+            if (window.myAppEventSource) {
+                window.myAppEventSource.addEventListener('ping', function(event) {
+                    img.src = `data:image/svg+xml;base64,${event.data}`;
+
+                });
+                window.myAppEventSource.onmessage = function(event) {
+                    const data = JSON.parse(event.data);
+                    output.innerText = data;
+                }
+            }
+        });
+    </script>
 </x-app-layout>
