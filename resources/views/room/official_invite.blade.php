@@ -50,18 +50,54 @@
         <div id="output"></div>
     </div>
     <script>
-        let img = document.getElementById('qr-code');
-        window.addEventListener('load', () => {
-            if (window.myAppEventSource) {
-                window.myAppEventSource.addEventListener('ping', function(event) {
-                    img.src = `data:image/svg+xml;base64,${event.data}`;
-
-                });
-                window.myAppEventSource.onmessage = function(event) {
-                    const data = JSON.parse(event.data);
-                    output.innerText = data;
+        (function() {
+            const img = document.getElementById('qr-code');
+            const loadingState = document.getElementById('qr-loading-state');
+            const outputEl = document.getElementById('output');
+            
+            function updateQr(data) {
+                if (!img) return;
+                img.src = `data:image/svg+xml;base64,${data}`;
+                if (loadingState) {
+                    loadingState.classList.add('opacity-0');
+                    setTimeout(() => loadingState.style.display = 'none', 300);
                 }
             }
-        });
+
+            let attempts = 0;
+            function attachListeners() {
+                if (window.myAppEventSource) {
+                    console.log("Global SSE stream found. Attaching QR listeners...");
+                    
+                    window.myAppEventSource.addEventListener('ping', function(event) {
+                        console.log(event.data);
+                        
+                        updateQr(event.data);
+                    });
+                    
+                    window.myAppEventSource.addEventListener('timer_tick', function(event) {
+                        const data = JSON.parse(event.data);
+                        console.log(data);
+                        
+                    });
+
+                    window.myAppEventSource.onmessage = function(event) {
+                        if(event.data.includes("status\":\"alive")) return;
+                        try {
+                            const data = JSON.parse(event.data);
+                            if (outputEl) outputEl.innerText = JSON.stringify(data);
+                        } catch(e) {}
+                    }
+                } else if (attempts < 50) {
+                    attempts++;
+                    // Try again in 100ms
+                    setTimeout(attachListeners, 100);
+                } else {
+                    console.error("Global SSE stream (myAppEventSource) could not be initialized.");
+                }
+            }
+
+            attachListeners();
+        })();
     </script>
 </x-app-layout>

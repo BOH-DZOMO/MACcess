@@ -52,7 +52,7 @@ Route::get('/dashboard', function () {
 
 Route::get("qr-code",[QRCodeController::class, 'index'])->name('qr.code');
 Route::get("sse_page",[QRCodeController::class, 'sse_page'])->name('sse_page');
-Route::get("sse",[QRCodeController::class, 'stream']);
+Route::get("sse",[App\Http\Controllers\SSEController::class, 'stream']);
 
 Route::prefix('rooms')->name('rooms.')->group(function () {
     

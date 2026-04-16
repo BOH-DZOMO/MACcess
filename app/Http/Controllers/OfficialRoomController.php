@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class OfficialRoomController extends Controller
@@ -308,8 +310,17 @@ class OfficialRoomController extends Controller
     /**
      * Show the invite page for the specified resource.
      */
-    public function invite(Room $room)
+    public function invite(Request $request, Room $room)
     {
+        $userId = $request->user() ? $request->user()->id : $request->session()->getId();
+        
+        // Use Cache facade for consistent key prefixing and storage
+        // This makes sure the SSE stream and this controller see the SAME key
+        Log::info("Invite for ID: " . $userId);
+
+
+        Cache::put("user_viewing_invite_{$userId}", $room->room_uuid, 300);
+
         return view('room.official_invite', compact('room'));
     }
 
